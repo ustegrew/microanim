@@ -1,0 +1,4 @@
+/**
+ * 
+ */
+require (["./gfx/module"]);

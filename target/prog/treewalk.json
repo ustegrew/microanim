@@ -1,0 +1,36 @@
+{
+    "resources":
+    {
+        "images":
+        [
+            {"key":"img.tree",                "uri":"../../target/img/tree/11.png",                     "targetLayer":"0"},
+            {"key":"img.banana",              "uri":"../../target/img/banana/banana.png",               "targetLayer":"1"},
+            {"key":"img.monkey.happy.01",     "uri":"../../target/img/monkey/monkey.happy.01.png",      "targetLayer":"2"},
+            {"key":"img.monkey.think.01",     "uri":"../../target/img/monkey/monkey.think.01.png",      "targetLayer":"2"},
+            {"key":"img.monkey.think.02",     "uri":"../../target/img/monkey/monkey.think.02.png",      "targetLayer":"2"},
+            {"key":"img.monkey.think.03",     "uri":"../../target/img/monkey/monkey.think.03.png",      "targetLayer":"2"},
+            {"key":"img.monkey.walk.01",      "uri":"../../target/img/monkey/monkey.walk.01.png",       "targetLayer":"2"},
+            {"key":"img.monkey.walk.02",      "uri":"../../target/img/monkey/monkey.walk.02.png",       "targetLayer":"2"}
+        ]
+    },
+    "program":
+    [
+        {
+            "cmd":"moveTo",
+            "args":
+            {
+                "subject":      "img.tree",
+                "x":            0,
+                "y":            0            
+            }
+        },
+        {
+            "cmd":"setTransparency",
+            "args":
+            {
+                "subject":      "img.tree",
+                "alpha":        0.0
+            }
+        }
+    ]
+}

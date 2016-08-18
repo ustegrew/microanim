@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="US-ASCII">
+        <title>img-non-resize-test-page</title>
+        <style>
+            #cv {
+                background:#ff0;
+            }
+        </style>
+        <script type="text/javascript">
+        window.onload=function ()
+        {
+            var resource = {};
+                    
+            function load( key, url ,callback ) {
+                
+                if(resource[key]) {
+                    callback( resource[key] );
+                    return ;
+                }
+                else {
+                    var img = new Image();
+                    img.onload = function() {
+                        resource[key] = img;
+                        callback( resource[key] );
+                    };
+                    resource[key] = false;
+                    img.src = url;
+                }
+            }
+
+            var $   = function ( q ){ return document.querySelector(q) };
+            var ctx = $('#cv').getContext("2d");
+
+
+            load('img_the_scream','../../target/img/monkey/monkey.happy.01.png', function( img ){
+                console.log(  img.width , img.height );
+                ctx.drawImage( img, 10, 10 , img.width , img.height );
+            });
+        }
+        </script>
+    </head>
+    <body>
+        <canvas id="cv" width="800" height="600"></canvas>
+    </body>
+</html>

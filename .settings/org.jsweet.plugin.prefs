@@ -1,0 +1,8 @@
+compiler.bundle=true
+compiler.bundlesDirectory=
+compiler.debugMode=ts
+compiler.javascriptFolder=target/dist
+compiler.moduleKind=none
+compiler.profiles=default
+compiler.typescriptFolder=.generated
+eclipse.preferences.version=1
