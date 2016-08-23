@@ -1,0 +1,742 @@
+'state' => 
+    'node' => 
+        'type' => 'VariableDeclarator' [string]
+        'start' => '4' [number]
+        'end' => '15' [number]
+        'id' => 
+            'type' => 'Identifier' [string]
+            'start' => '4' [number]
+            'end' => '10' [number]
+            'name' => 'result' [string]
+        'init' => 
+            'type' => 'ArrayExpression' [string]
+            'start' => '13' [number]
+            'end' => '15' [number]
+            'elements' => []
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'ExpressionStatement' [string]
+        'start' => '173' [number]
+        'end' => '195' [number]
+        'expression' => 
+            'type' => 'CallExpression' [string]
+            'start' => '173' [number]
+            'end' => '194' [number]
+            'callee' => 
+                'type' => 'Identifier' [string]
+                'start' => '173' [number]
+                'end' => '182' [number]
+                'name' => 'fibonacci' [string]
+            'arguments' => 
+            [
+                'i -> ' => 
+                    'type' => 'Literal' [string]
+                    'start' => '183' [number]
+                    'end' => '185' [number]
+                    'value' => '16' [number]
+                    'raw' => '16' [string]
+                'i -> ' => 
+                    'type' => 'Identifier' [string]
+                    'start' => '187' [number]
+                    'end' => '193' [number]
+                    'name' => 'result' [string]
+            ]
+    'done' => 'true' [boolean]
+
+'state' => 
+    'node' => 
+        'type' => 'VariableDeclarator' [string]
+        'start' => '55' [number]
+        'end' => '60' [number]
+        'id' => 
+            'type' => 'Identifier' [string]
+            'start' => '55' [number]
+            'end' => '56' [number]
+            'name' => 'a' [string]
+        'init' => 
+            'type' => 'Literal' [string]
+            'start' => '59' [number]
+            'end' => '60' [number]
+            'value' => '1' [number]
+            'raw' => '1' [string]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'VariableDeclarator' [string]
+        'start' => '62' [number]
+        'end' => '67' [number]
+        'id' => 
+            'type' => 'Identifier' [string]
+            'start' => '62' [number]
+            'end' => '63' [number]
+            'name' => 'b' [string]
+        'init' => 
+            'type' => 'Literal' [string]
+            'start' => '66' [number]
+            'end' => '67' [number]
+            'value' => '1' [number]
+            'raw' => '1' [string]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'VariableDeclarator' [string]
+        'start' => '85' [number]
+        'end' => '90' [number]
+        'id' => 
+            'type' => 'Identifier' [string]
+            'start' => '85' [number]
+            'end' => '86' [number]
+            'name' => 'i' [string]
+        'init' => 
+            'type' => 'Literal' [string]
+            'start' => '89' [number]
+            'end' => '90' [number]
+            'value' => '0' [number]
+            'raw' => '0' [string]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'ExpressionStatement' [string]
+        'start' => '110' [number]
+        'end' => '125' [number]
+        'expression' => 
+            'type' => 'CallExpression' [string]
+            'start' => '110' [number]
+            'end' => '124' [number]
+            'callee' => 
+                'type' => 'MemberExpression' [string]
+                'start' => '110' [number]
+                'end' => '121' [number]
+                'object' => 
+                    'type' => 'Identifier' [string]
+                    'start' => '110' [number]
+                    'end' => '116' [number]
+                    'name' => 'output' [string]
+                'property' => 
+                    'type' => 'Identifier' [string]
+                    'start' => '117' [number]
+                    'end' => '121' [number]
+                    'name' => 'push' [string]
+                'computed' => 'false' [boolean]
+            'arguments' => 
+            [
+                'i -> ' => 
+                    'type' => 'Identifier' [string]
+                    'start' => '122' [number]
+                    'end' => '123' [number]
+                    'name' => 'a' [string]
+            ]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'ExpressionStatement' [string]
+        'start' => '130' [number]
+        'end' => '142' [number]
+        'expression' => 
+            'type' => 'AssignmentExpression' [string]
+            'start' => '130' [number]
+            'end' => '141' [number]
+            'operator' => '=' [string]
+            'left' => 
+                'type' => 'Identifier' [string]
+                'start' => '130' [number]
+                'end' => '133' [number]
+                'name' => 'sum' [string]
+            'right' => 
+                'type' => 'BinaryExpression' [string]
+                'start' => '136' [number]
+                'end' => '141' [number]
+                'left' => 
+                    'type' => 'Identifier' [string]
+                    'start' => '136' [number]
+                    'end' => '137' [number]
+                    'name' => 'a' [string]
+                'operator' => '+' [string]
+                'right' => 
+                    'type' => 'Identifier' [string]
+                    'start' => '140' [number]
+                    'end' => '141' [number]
+                    'name' => 'b' [string]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'ExpressionStatement' [string]
+        'start' => '147' [number]
+        'end' => '153' [number]
+        'expression' => 
+            'type' => 'AssignmentExpression' [string]
+            'start' => '147' [number]
+            'end' => '152' [number]
+            'operator' => '=' [string]
+            'left' => 
+                'type' => 'Identifier' [string]
+                'start' => '147' [number]
+                'end' => '148' [number]
+                'name' => 'a' [string]
+            'right' => 
+                'type' => 'Identifier' [string]
+                'start' => '151' [number]
+                'end' => '152' [number]
+                'name' => 'b' [string]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'ExpressionStatement' [string]
+        'start' => '158' [number]
+        'end' => '166' [number]
+        'expression' => 
+            'type' => 'AssignmentExpression' [string]
+            'start' => '158' [number]
+            'end' => '165' [number]
+            'operator' => '=' [string]
+            'left' => 
+                'type' => 'Identifier' [string]
+                'start' => '158' [number]
+                'end' => '159' [number]
+                'name' => 'b' [string]
+            'right' => 
+                'type' => 'Identifier' [string]
+                'start' => '162' [number]
+                'end' => '165' [number]
+                'name' => 'sum' [string]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'UpdateExpression' [string]
+        'start' => '99' [number]
+        'end' => '102' [number]
+        'operator' => '++' [string]
+        'prefix' => 'false' [boolean]
+        'argument' => 
+            'type' => 'Identifier' [string]
+            'start' => '99' [number]
+            'end' => '100' [number]
+            'name' => 'i' [string]
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => *
+    'done' => 'true' [boolean]
+
+'state' => *
+
+'state' => 
+    'node' => 
+        'type' => 'ExpressionStatement' [string]
+        'start' => '196' [number]
+        'end' => '221' [number]
+        'expression' => 
+            'type' => 'CallExpression' [string]
+            'start' => '196' [number]
+            'end' => '220' [number]
+            'callee' => 
+                'type' => 'Identifier' [string]
+                'start' => '196' [number]
+                'end' => '201' [number]
+                'name' => 'alert' [string]
+            'arguments' => 
+            [
+                'i -> ' => 
+                    'type' => 'CallExpression' [string]
+                    'start' => '202' [number]
+                    'end' => '219' [number]
+                    'callee' => 
+                        'type' => 'MemberExpression' [string]
+                        'start' => '202' [number]
+                        'end' => '213' [number]
+                        'object' => 
+                            'type' => 'Identifier' [string]
+                            'start' => '202' [number]
+                            'end' => '208' [number]
+                            'name' => 'result' [string]
+                        'property' => 
+                            'type' => 'Identifier' [string]
+                            'start' => '209' [number]
+                            'end' => '213' [number]
+                            'name' => 'join' [string]
+                        'computed' => 'false' [boolean]
+                    'arguments' => 
+                    [
+                        'i -> ' => 
+                            'type' => 'Literal' [string]
+                            'start' => '214' [number]
+                            'end' => '218' [number]
+                            'value' => ', ' [string]
+                            'raw' => '', '' [string]
+                    ]
+            ]
+    'done' => 'true' [boolean]
+
+'state' => *
+

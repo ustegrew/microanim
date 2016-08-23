@@ -1,11 +1,33 @@
 
 # A miniature Javascript animation framework.
-Animation framework. Will replace the source code example runner in the 
+Animation framework to demonstrate cource code examples. 
+
+Will replace the source code example runner in the 
 [it001](https://github.com/ustegrew/ustegrew.github.io) course. The 
 present source code example runner is very cumbersome to integrate
 into the site which makes maintenance difficult.
 
 Note that this project is still in very early stages. 
+
+I've looked high and low on the internet to find a Javascript execution environment which can be embedded into a web page and works like the  debugger as found in Chrome or Firefox. Specifically, I'm looking for an environment which  
+
+1. Allows me to step through a program line,
+2. Allows me to query any object at any time,
+3. Can be embedded into a web page (i.e. visually and functionally),
+4. Works out of the box, i.e. without the need of installing a browser extension.
+
+Requirement 1 and 2 are easy to fulfill, as Chrome and Firefox have inbuilt debuggers which allow line-by-line stepping and variable querying. However, requirements 3 and 4 aren't supported by any browser. The debuggers provided by Chrome and Firefox are fine for development, but too clunky for a learning environment. 
+ 
+* Bringing the debugger up requires the user to press a complicated key combination (Finger acrobatic) or click some ominous menu item (requiring several mouse clicks). That's fine for a one-off, but it's distracting when following the teaching text with multiple examples per page.
+* The browser inbuilt debugger splits the window or opens in a separate window which is another distraction as the teaching text either scrolls or gets covered by the debugger.
+
+I have tried several approaches, none of which yielded usable results. I tried to:
+
+* Access the web browser's debugger API in Javascript, allowing me to 'remote control' it from the web page itself.
+* Find a Javascript interpreter written in Javascript, to run the code examples. There was one hopeful [candidate](https://github.com/NeilFraser/JS-Interpreter) which allows me to step through Javascript code - but it's hard to retrieve the stored data.
+
+Therefore I'm exploring whether it's possible to create an independent execution model which operates sufficiently to demonstrate the programming concepts shown in the `it001` course in a line-by-line-stepping fashion.
+
 
 ## Novel approach to Javascript development...
 At least for me! Some time ago I discovered the [JSweet framework](http://www.jsweet.org).
@@ -18,7 +40,6 @@ Javascript development so much easier for me!
 In this project, JSweet compiles the Java code into a single Javascript file 
 (`target/dist/bundle.js`). I use that file in the index page (`src/treewalk/index.html`).
 The `bundle.js` file works out of the box in my web browser (Tested with chromium 51 and firefox 48).
-
 
 ## On linguistics in Javascript
 ... Or: How I can make Javascript execute programs in an arbitrary language? The current `it001` 
