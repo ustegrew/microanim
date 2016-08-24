@@ -44,26 +44,49 @@ Variables must be declared before they can be used. This makes them known to the
 
 `declare name` Declare variable `name`.
 
+Variables are weakly typed.
+
 #### Arrays
 
-We support arrays. They must be declared with dimensionless square bracket notation. 
-Arrays are dynamic, indices are zero based.
+* Arrays are dynamic, i.e. we can add or delete elements to an array at runtime.
+* We don't allow sparse arrays (i.e. no undefined values allowed).
+
+Arrays must be declared with dimensionless square brackets
 
     declare x[]
-
-Access to array elements via index
-
-    x[10]           // 11th element in x
     
-We don't support sparse arrays.
+Array elements can be accessed by index. Indices are zero-based.
+
+    r = x[0]
+    x[0] = 100
+
+Setting a previously unset array element will initialize all other unset elements before it to `null`.
+
+    declare x[]         // x = []
+    x[0] = 5            // x = [5]
+    x[2] = 10           // x = [5, null, 10]
 
 #### Functions for arrays
 
-    GetSize (x)     // Return number of elements in x
+Returns the number of elements in `x`.
+
+    n = GetSize (x)
+
+Returns and deletes the first element in the array, shifting any other entries one position down. 
+
+    v = Dequeue (x)
     
-    Add (x, v)      // Append value at the end of x
-    
-    Delete (x, i)   // Delete element #i from x 
+Adds value `v` at the beginning of `x`, shifting any other entries one position up.
+
+    Enqueue (x, v)   
+
+Returns and deletes the last element of `x`.
+ 
+    v = Pop (x)
+
+Add value `v` at the end of `x`.
+
+    Push (x, v)
 
 ### Expressions (Assignments)
 
