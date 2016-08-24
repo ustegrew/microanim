@@ -101,8 +101,7 @@ Terms perform various computations using operators and operands.
 
 ### Operators
 
-It's not the place to explain all operators. Operators work the same as in Javascript - incl. precedence.
-We support these:
+Operators work the same as in Javascript - incl. precedence. We support these:
 
 #### Arithmetic
 

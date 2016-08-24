@@ -38,7 +38,7 @@ the project, JSweet trans-piles my Java code into working Javascript. Using JSwe
 Javascript development so much easier for me!
 
 In this project, JSweet compiles the Java code into a single Javascript file 
-(`target/dist/bundle.js`). I use that file in the index page (`src/treewalk/index.html`).
+(`target/dist/bundle.js`). I use that file in the index page (`src/microanim/index.html`).
 The `bundle.js` file works out of the box in my web browser (Tested with chromium 51 and firefox 48).
 
 ## On linguistics in Javascript
