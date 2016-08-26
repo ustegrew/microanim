@@ -22,11 +22,12 @@
 
 ## Variables  
 
+Variables are weakly typed.
 Variables must be declared before they can be used. This makes them known to the simulation environment. 
 
-`declare name` Declare variable `name`.
+    declare name 
 
-Variables are weakly typed.
+Declare variable `name`.
 
 
 ### Arrays
@@ -54,23 +55,23 @@ Setting a previously unset array element will initialize all other unset element
 
 Returns the number of elements in `x`.
 
-    n = GetSize (x)
+    int GetSize (TArray x)
 
 Returns and deletes the first element in the array, shifting any other entries one position down. 
 
-    v = Dequeue (x)
+    T Dequeue<T> (TArray x)
     
 Adds value `v` at the beginning of `x`, shifting any other entries one position up.
 
-    Enqueue (x, v)   
+    Enqueue<T> (TArray x, T v)   
 
 Returns and deletes the last element of `x`.
  
-    v = Pop (x)
+    T Pop<T> (TArray x)
 
 Add value `v` at the end of `x`.
 
-    Push (x, v)
+    void Push<T> (TArray x, T v)
 
 
 ## Expressions (Assignments)
@@ -142,7 +143,7 @@ Control flow expressions work as in Javascript. We support a subset of the Javas
         // do other stuff
     }
 
-`if`/`else if`/`else` 
+
 
     if (condition)
     {
@@ -174,60 +175,51 @@ Control flow expressions work as in Javascript. We support a subset of the Javas
     {
         // do stuff
     }
-    
-`do...while`
-
-    do
-    {
-        // do stuff
-    }
-    while (continue-condition)
 
 
 ## Functions
 
-Work as in Javascript. Supports parameters and return values.
+    T function<T> name (param, param, param, ...)
 
-    function name (param, param, param, ...)
-    {
-        var x = 3;
-        return x;
-    }
-
-Parameters and/or return values are optional.
-
-    function name ()
-    {
-        do stuff
-    }
 
 ## Simulation
 
 Commands pertaining to running a simulation
 
-	Reset ()
-	StepBack ()
-	StepForward ()
-	GetStack ()
-	GetScope ()
+	void Reset ()
+	void StepBackward ()
+	void StepForward ()
+	TStackExec GetStack ()
+	TScope GetScope ()
+    void HideVar (String id)
+    void ShowVar (String id)
 
 
 ## Animation
 
 We support a very basic set of animation commands.
 
+### GUI
+    
+    void SetTransparency (String id, double alpha, int mSec)
+    
+Sets the transparency of the Widget `id` to the given transparency level. Values for `alpha`:
+
+* 0.0: Not transparent
+* 1.0: Fully transparent
 
 ### Resources  
 
-    LoadImg (String id, String path, String layer)` 
-
+    void LoadImg (String id, String path, String layer)
+    void CreateDisplay (String id, EDispType t, TPoint2D ref, String layer)   
+    
 
 ### Transforms
 
-    MoveTo (String id, int x, int y, int mSec)
     MoveBy (String id, double len, int mSec)
+    MoveTo (String id, int x, int y, int mSec)
     RotateBy (String id, double alpha, int mSec)
-    SetTransparency (String id, double alpha, int mSec)
+    RotateTo (String id, double alpha, int mSec)
 
 
 ### Animation blocks
