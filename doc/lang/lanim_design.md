@@ -2,56 +2,62 @@
 
 MAL is the animation language which drives the micro anim simulator. It mixes a core language with some basic animation and GUI commands. Overall, we strive to keep the language very simple. The core part is a very stripped down adaptation of ECMAScript, and the animation part offers a few basic commands to operate the simulator and animate the various objects in the simulator's viewport.
 
-(Initially?) we run the simulator inside a web browser, i.e. it's running as a Javascript application. To keep things simple we largely follow the ECMAScript model. For example, variables are weakly typed - otherwise we'd need a strong type system on top of ECMAScript. This would blow the simulator's complexity out of proportion
+(Initially?) we run the simulator inside a web browser, i.e. it's running as a Javascript application. To keep things simple we largely follow the ECMAScript model. For example, variables are weakly typed - otherwise we'd need a strong type system on top of ECMAScript. This would blow the simulator's complexity out of proportion. We also deviate from the ECMAScript model. Most notably declarations, statements and expressions don't terminate with a semicolon, but with an end-of-line character (or start of a comment). This means that declarations, statements or expressions must be written one per line each (i.e. we don't allow for multiple statements/expressions in one line).
+
+MAL programs can contain empty lines.
+
 
 ## Core language (`mal.core`)
 
+
+### Comments
+
+Programmer's remarks - for explanation purposes or entertainement. Comments...
+
+* ... will be ignored by the simulator.
+* ... can span one or more lines.
+* ... can begin in the same line as a statement or expression.
+
+
+We cater for...
+
+* Single line comments. Prepended by a double forward slash "//". Can be in it's own line or at the end of an expression or statement.
+* Multiline comments. Marked by "/*" at the start and "*/" at the end. Can span one or more lines and can start at the end of an assignment or statement.
+
+
+    // This is a single line comment
+    /* And this is
+       a multi line
+       comment
+     */
+     
+    x = 3                       // Single line comments can follow an expression...
+    PushFirst (b, "myValue")    // ... or a statement
+    
+    /* Multi line comments can  fit into one line */
+    x = 17                      /* ... and be in the same line as some executable code  */
+
+
 ### Literals
 
-With respect to numerical values: Internally, they will always be represented as a floating point number.
-
-#### Decimals
-
-A sequence of decimal digits `[0-9]`, optionally with a decimal point `.`. If there's a decimal point, it must have at least one decimal digit before it.
-
-    3
-    30.35
-    4.1
-    0.8
-
-    
-#### Hexadecimals
-
-Starts with `0x` followed by a sequence of hexadecimal digits `[0-9a-fA-F]`. For hexadecimal digits we cater for
-upper and lower case characters. 
-    
-    0x3
-    0x02
-    0xA35F
-    0x2c7B
-    
-
-#### Binary
-
-Starts with '0b' followed by a sequence of binary digits `01]`.
-
-    0b0
-    0b101
-    0b1001
+Fixed values in source code.
 
 
-#### Boolean
+#### Numerical values
 
-Either `true` or `false`
+Internally, these will always be represented as a floating point number.
 
-    true
-    false
+* Decimals. A sequence of decimal digits `[0-9]`, optionally with a decimal point `.`. If there's a decimal point, it must have at least one decimal digit before it. Examples: `3`, `30.35`, `4.1`, `0.8`
+* Hexadecimals. Start with `0x` followed by a sequence of hexadecimal digits `[0-9a-fA-F]`. For hexadecimal digits we cater for upper and lower case characters. Examples: `0x3`, `0x02`, `0xA35F`, `0x2c7B`
+* Binaries. Start with '0b' followed by a sequence of binary digits `01]`. Examples: `0b0`, `0b101`, `0b1001`
 
 
-#### Null
+#### Others
 
-    `null`
-    
+* Booleans. Either `true` or `false`.
+* `null`
+
+
 ### Variables  
 
 Variables must be declared before they can be used. This makes them known to the simulation environment. Please note that variables are always weakly typed.
@@ -61,25 +67,39 @@ Variables must be declared before they can be used. This makes them known to the
 Declare variable `name`.
 
 
-#### Arrays
+#### Arrays (mal.core.TArray)
 
-* Arrays are dynamic, i.e. we can add or delete elements to an array at runtime.
-* We don't allow sparse arrays (i.e. no undefined values allowed).
-
-Arrays must be declared with dimensionless square brackets
+Arrays must be declared with dimensionless square brackets.
 
     declare x[]
     
+
 Array elements can be accessed by index. Indices are zero-based.
 
-    r = x[0]
-    x[0] = 100
+    r = x[0]            // Set r to the value stored in the first element of x.
 
-Setting a previously unset array element will initialize all other unset elements before it to `null`.
 
-    declare x[]         // x = []
-    x[0] = 5            // x = [5]
-    x[2] = 10           // x = [5, null, 10]
+Arrays elements readable and writable.
+
+    // Assume x = [15, 4, 12, 21] and i = 2
+    temp   = x[i]       // temp := 12 
+    x[i]   = x[i+1]     // x := [15, 4, 21, 21]
+    x[i+1] = temp       // x := [15, 4, 21, 12]
+
+    
+Arrays are dynamic, i.e. we can add or delete elements to an array at runtime.
+
+    declare x[]         // x := []
+    x[0] = "Hello"      // x := ["Hello"]
+    x[1] = "World"      // x := ["Hello", "World"]
+    s     = Pop (x)     // x := ["Hello"]
+
+
+We don't allow sparse arrays (i.e. no undefined values allowed). Setting a previously unset array element will initialize all other unset elements before it to `null`.
+
+    declare x[]         // x := []
+    x[0] = 5            // x := [5]
+    x[3] = 10           // x := [5, null, null, 10]
 
 
 ##### Functions for arrays
@@ -88,21 +108,21 @@ Returns the number of elements in `x`.
 
     int GetSize (TArray x)
 
-Returns and deletes the first element in the array, shifting any other entries one position down. 
+Returns and deletes the first element in the array, shifting any further entries one position down. 
 
-    T Dequeue<T> (TArray x)
+    T PopFirst<T> (TArray x)
     
-Adds value `v` at the beginning of `x`, shifting any other entries one position up.
+Adds value `v` at the beginning of `x`, shifting any further entries one position up.
 
-    Enqueue<T> (TArray x, T v)   
+    PushFirst<T> (TArray x, T v)   
 
 Returns and deletes the last element of `x`.
- 
-    T Pop<T> (TArray x)
+ follow somefollow some
+    T PopLast<T> (TArray x)
 
 Add value `v` at the end of `x`.
 
-    void Push<T> (TArray x, T v)
+    void PushLast<T> (TArray x, T v)
 
 
 ### Expressions (Assignments)
@@ -116,33 +136,33 @@ An expression computes a term and assigns the result to a variable. A term is a 
 
 #### Operators
 
-|   Type        | Operator                          | Meaning                               | Examples                      |
-| ---------     | --------------------------------- | ------------------------------------- | ----------------------------- |
-| Arithmetic    | `a + b`                           | addition                              |                               |
-|               | `a - b`                           | subtraction                           |                               |
-|               | `a * b`                           | multiplication                        |                               |
-|               | `a / b`                           | division                              |                               |
-|               | `-a`                              | unary negation                        |                               |
-|               | `a % b`                           | Remainder (modulo)                    |                               |
-| Bitwise       | `a & b`                           | AND                                   |                               |
-|               | <code>a &#124; b</code>           | OR                                    |                               |
-|               | `a ^ b`                           | XOR                                   |                               |
-|               | `~a`                              | NOT                                   |                               |
-|               | `a << b`                          | LShift                                |                               |
-|               | `a >> b`                          | RShift                                |                               |
-|               | `a >>> b`                         | RShift + insert zeros                 |                               |
-| Comparison    | `a == b`                          | Loosely Equal                         |                               |
-|               | `a === b`                         | Strictly equal                        |                               |
-|               | `a != b`                          | Loosely unequal                       |                               | 
-|               | `a !== b`                         | Strictly unequal                      |                               |
-|               | `a > b`                           | Greater than                          |                               |
-|               | `a >= b`                          | Greater than, or, equal to            |                               |
-|               | `a < b`                           | Smaller than                          |                               |
-|               | `a <= b`                          | Smaller than, or, equal to            |                               |
-| Logical       | `a && b`                          | AND                                   |                               |
-|               | <code>a &#124;&#124; b</code>     | OR                                    |                               |
-|               | `!b`                              | NOT                                   |                               |
-| String        | `a + b`                           | Concatenate                           |                               |
+|   Type        | Operator                          | Meaning                               |
+| ---------     | --------------------------------- | ------------------------------------- |
+| Arithmetic    | `a + b`                           | addition                              |
+|               | `a - b`                           | subtraction                           |
+|               | `a * b`                           | multiplication                        |
+|               | `a / b`                           | division                              |
+|               | `-a`                              | unary negation                        |
+|               | `a % b`                           | Remainder (modulo)                    |
+| Bitwise       | `a & b`                           | AND                                   |
+|               | <code>a &#124; b</code>           | OR                                    |
+|               | `a ^ b`                           | XOR                                   |
+|               | `~a`                              | NOT                                   |
+|               | `a << b`                          | LShift                                |
+|               | `a >> b`                          | RShift                                |
+|               | `a >>> b`                         | RShift + insert zeros                 |
+| Comparison    | `a == b`                          | Loosely Equal                         |
+|               | `a === b`                         | Strictly equal                        |
+|               | `a != b`                          | Loosely unequal                       |
+|               | `a !== b`                         | Strictly unequal                      |
+|               | `a > b`                           | Greater than                          |
+|               | `a >= b`                          | Greater than, or, equal to            |
+|               | `a < b`                           | Smaller than                          |
+|               | `a <= b`                          | Smaller than, or, equal to            |
+| Logical       | `a && b`                          | AND                                   |
+|               | <code>a &#124;&#124; b</code>     | OR                                    |
+|               | `!b`                              | NOT                                   |
+| String        | `a + b`                           | Concatenate                           |
 
 
 #### Brackets
@@ -157,8 +177,6 @@ We support statement blocks. They have to be enclosed in brackets.
 
 
 ### Control flow
-
-Control flow expressions work as in Javascript. We support a subset of the Javascript control flow statements.
 
 `If`
 
