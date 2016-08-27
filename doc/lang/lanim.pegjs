@@ -116,7 +116,29 @@ Op_UnaryBinaryNOT
 Op_UnaryLogicalNOT
     = "!"
 
+/* Literals */
+
+L_Decimal
+    = literal:[0]                                                   {return literal;}
+    / literal:([1-9][0-9]*)                                         {return literal;}
+    / literal:([0-9]+[.][0-9]+)                                     {return literal;}
+
+L_Hex
+    = literal:"0x"[0-9a-fA-F]+                                      {return literal;}
     
+L_Bin
+    = literal:"0b"[01]+                                             {return literal;}
+
+L_String
+    = literal:('"' (!('"'/LineTerminator) SourceCharacter)* '"')    {return literal;}
+
+L_Boolean
+    = "true"                                                        {return true;}
+    / "false"                                                       {return false;}
+    
+L_Null
+    = "null"                                                        {return null;}
+
 /* Keywords */
 
 Keyword
@@ -184,11 +206,9 @@ Comment "comment"
 MultiLineComment
   = "/*" (!"*/" SourceCharacter)* "*/"
 
-MultiLineCommentNoLineTerminator
-  = "/*" (!("*/" / LineTerminator) SourceCharacter)* "*/"
-
 SingleLineComment
   = "//" (!LineTerminator SourceCharacter)*
 
-
+Identifier
+  = !
 

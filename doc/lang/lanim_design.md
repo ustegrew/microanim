@@ -1,36 +1,67 @@
-# Anim-lang
+# MAL - the MicroAnimLanguage (`mal.*`)
 
+MAL is the animation language which drives the micro anim simulator. It mixes a core language with some basic animation and GUI commands. Overall, we strive to keep the language very simple. The core part is a very stripped down adaptation of ECMAScript, and the animation part offers a few basic commands to operate the simulator and animate the various objects in the simulator's viewport.
 
-## Literals
+(Initially?) we run the simulator inside a web browser, i.e. it's running as a Javascript application. To keep things simple we largely follow the ECMAScript model. For example, variables are weakly typed - otherwise we'd need a strong type system on top of ECMAScript. This would blow the simulator's complexity out of proportion
 
-    3                   number
-    3.5                 number
-    -8                  number
-    0xa0                number (hexadecimal)
-    0b0101              number (binary)
-    "hello world"       string    
+## Core language (`mal.core`)
+
+### Literals
+
+With respect to numerical values: Internally, they will always be represented as a floating point number.
+
+#### Decimals
+
+A sequence of decimal digits `[0-9]`, optionally with a decimal point `.`. If there's a decimal point, it must have at least one decimal digit before it.
+
+    3
+    30.35
+    4.1
+    0.8
+
+    
+#### Hexadecimals
+
+Starts with `0x` followed by a sequence of hexadecimal digits `[0-9a-fA-F]`. For hexadecimal digits we cater for
+upper and lower case characters. 
+    
+    0x3
+    0x02
+    0xA35F
+    0x2c7B
     
 
-## Comments
+#### Binary
 
-    // Single line comment
+Starts with '0b' followed by a sequence of binary digits `01]`.
+
+    0b0
+    0b101
+    0b1001
+
+
+#### Boolean
+
+Either `true` or `false`
+
+    true
+    false
+
+
+#### Null
+
+    `null`
     
-    /*
-       Multi line comment
-    */
+### Variables  
 
-
-## Variables  
-
-Variables are weakly typed.
-Variables must be declared before they can be used. This makes them known to the simulation environment. 
+Variables must be declared before they can be used. This makes them known to the simulation environment. Please note that variables are always weakly typed.
 
     declare name 
 
 Declare variable `name`.
 
 
-### Arrays
+#### Arrays
 
 * Arrays are dynamic, i.e. we can add or delete elements to an array at runtime.
 * We don't allow sparse arrays (i.e. no undefined values allowed).
@@ -51,7 +82,7 @@ Setting a previously unset array element will initialize all other unset element
     x[2] = 10           // x = [5, null, 10]
 
 
-#### Functions for arrays
+##### Functions for arrays
 
 Returns the number of elements in `x`.
 
@@ -74,12 +105,16 @@ Add value `v` at the end of `x`.
     void Push<T> (TArray x, T v)
 
 
-## Expressions (Assignments)
+### Expressions (Assignments)
 
-`var = term`. Sets content of variable `var ` to the result of term `term`.
+An expression computes a term and assigns the result to a variable. A term is a computable sequence of literals and operators returning a literalizable value [1].
+
+    // Sets the content of variable `y` to the result of the term
+    // '2 * 5'. Result will map directly to the literal 10.
+    var = 2 * 5
 
 
-### Operators
+#### Operators
 
 |   Type        | Operator                          | Meaning                               | Examples                      |
 | ---------     | --------------------------------- | ------------------------------------- | ----------------------------- |
@@ -110,18 +145,18 @@ Add value `v` at the end of `x`.
 | String        | `a + b`                           | Concatenate                           |                               |
 
 
-### Brackets
+#### Brackets
 
 `(`, `)`                        Brackets - change the order of precendence.  
 
 
-## Statements
+### Statements
 
 Statements terminate with a newline character (i.e. we allow for one statement per line). 
 We support statement blocks. They have to be enclosed in brackets.
 
 
-## Control flow
+### Control flow
 
 Control flow expressions work as in Javascript. We support a subset of the Javascript control flow statements.
 
@@ -177,12 +212,12 @@ Control flow expressions work as in Javascript. We support a subset of the Javas
     }
 
 
-## Functions
+### Functions
 
     T function<T> name (param, param, param, ...)
 
 
-## Simulation
+## Simulation (`mal.sim`)
 
 Commands pertaining to running a simulation
 
@@ -195,7 +230,7 @@ Commands pertaining to running a simulation
     void ShowVar (String id)
 
 
-## Animation
+## Animation (`mal.anim`)
 
 We support a very basic set of animation commands.
 
@@ -253,3 +288,5 @@ Animation blocks can be combined
         ]
     >
 
+----------------------------------------------------
+[1] Literalizable value: A value that can be represented by a literal. E.g. `25`, `"Hello"`, `0b100`.
