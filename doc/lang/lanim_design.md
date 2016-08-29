@@ -12,7 +12,7 @@ MAL programs can contain empty lines.
 
 ### Comments
 
-Programmer's remarks - for explanation purposes or entertainement. Comments...
+Programmer's remarks - for explanation purposes or entertainment. Comments...
 
 * ... will be ignored by the simulator.
 * ... can span one or more lines.
