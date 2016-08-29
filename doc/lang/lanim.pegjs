@@ -1,4 +1,4 @@
-/* 
+/*
  * Animation language grammar
  * ==========================
  *
@@ -6,9 +6,9 @@
  * Converted to a javascript component by the PEGjs parser generator [1].
  *
  * Developed with input from the Javascript expression grammar
- * example in the PEGjs project repository [2]. Many thanks to 
- * David Majda [3] without whom this parser would have been much 
- * more difficult to design. 
+ * example in the PEGjs project repository [2]. Many thanks to
+ * David Majda [3] without whom this parser would have been much
+ * more difficult to design.
  *
  * --------
  *
@@ -38,12 +38,12 @@ WhiteSpace "whitespace"
 LineTerminator
   = [\n\r\u2028\u2029]
 
-  
+
 /* Operators */
-  
+
 Op_Add
     = $("+")
-    
+
 Op_Subtract
     = $("-")
 
@@ -82,7 +82,7 @@ Op_EqualNotStrict
 
 Op_GreaterThan
     = $(">")
-    
+
 Op_GreaterThanOrEqualTo
     = ">="
 
@@ -100,10 +100,10 @@ Op_Multiply
 
 Op_SmallerThan
     = $("<")
-    
+
 Op_SmallerThanOrEqualTo
     = "<="
-    
+
 Op_UnaryPositive
     = $("+")
 
@@ -125,7 +125,7 @@ L_Decimal
 
 L_Hex
     = literal:"0x"[0-9a-fA-F]+                                      {return literal;}
-    
+
 L_Bin
     = literal:"0b"[01]+                                             {return literal;}
 
@@ -135,7 +135,7 @@ L_String
 L_Boolean
     = "true"                                                        {return true;}
     / "false"                                                       {return false;}
-    
+
 L_Null
     = "null"                                                        {return null;}
 
@@ -182,8 +182,10 @@ Tok_If              = "If"
 Tok_LoadImg         = "LoadImg"
 Tok_MoveBy          = "MoveBy"
 Tok_MoveTo          = "MoveTo"
-Tok_Pop             = "Pop"
-Tok_Push            = "Push"
+Tok_PopFirst        = "PopFirst"
+Tok_PopLast         = "PopLast"
+Tok_PushFirst       = "PushFirst"
+Tok_PushLast        = "PushLast"
 Tok_Reset           = "Reset"
 Tok_RotateBy        = "RotateBy"
 Tok_RotateTo        = "RotateTo"
@@ -211,4 +213,3 @@ SingleLineComment
 
 Identifier
   = !
-

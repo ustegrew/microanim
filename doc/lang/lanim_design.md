@@ -30,10 +30,10 @@ We cater for...
        a multi line
        comment
      */
-     
+
     x = 3                       // Single line comments can follow an expression...
     PushFirst (b, "myValue")    // ... or a statement
-    
+
     /* Multi line comments can  fit into one line */
     x = 17                      /* ... and be in the same line as some executable code  */
 
@@ -62,7 +62,7 @@ Internally, these will always be represented as a floating point number.
 
 Variables must be declared before they can be used. This makes them known to the simulation environment. Please note that variables are always weakly typed.
 
-    declare name 
+    declare name
 
 Declare variable `name`.
 
@@ -72,7 +72,7 @@ Declare variable `name`.
 Arrays must be declared with dimensionless square brackets.
 
     declare x[]
-    
+
 
 Array elements can be accessed by index. Indices are zero-based.
 
@@ -82,11 +82,11 @@ Array elements can be accessed by index. Indices are zero-based.
 Arrays elements readable and writable.
 
     // Assume x = [15, 4, 12, 21] and i = 2
-    temp   = x[i]       // temp := 12 
+    temp   = x[i]       // temp := 12
     x[i]   = x[i+1]     // x := [15, 4, 21, 21]
     x[i+1] = temp       // x := [15, 4, 21, 12]
 
-    
+
 Arrays are dynamic, i.e. we can add or delete elements to an array at runtime.
 
     declare x[]         // x := []
@@ -103,26 +103,130 @@ We don't allow sparse arrays (i.e. no undefined values allowed). Setting a previ
 
 
 ##### Functions for arrays
+<dl>
+    <dt><code>int GetSize (TArray&lt;T&gt; x)</code></dt>
+    <dd>
+        Returns the number of elements stored in <code>x</code>.
+        <dl>
+            <dt>Parameters</dt>
+            <dd>
+                <dl>
+                    <dt><code>TArray&lt;T&gt; x</code></dt>
+                    <dd>The Array being queried</dd>
+                </dl>
+            </dd>
+            <dt>Returns</dt>
+            <dd><code>int</code> The number of elements in <code>x</code></dd>
+            <dt></dt>
+            <dd>
+<pre>
+                                // assume:  a == [4, 2, 6]
+n = GetSize (a)                 // n := 3
+</pre>
+            </dd>
+        </dl>
+    </dd>
+</dl>
 
-Returns the number of elements in `x`.
+<dl>
+    <dt><code>T PopFirst&lt;T&gt; (TArray&lt;T&gt; x)</code></dt>
+    <dd>
+        Returns and deletes the first element in <code>x</code>, shifting any further entries one position down.
+        <dl>
+            <dd>
+                <dl>
+                    <dt><code>TArray&lt;T&gt; x</code></dt>
+                    <dd>The Array of which we'd like to retrieve the first element</dd>
+                </dl>
+            </dd>
+            <dt>Returns</dt>
+            <dd><code>T</code> The first element in <code>x</code></dd>
+            <dt>Examples</dt>
+            <dd>
+<pre>
+                                // assume:  a == [4, 2, 6]
+x = PopFirst (a)                // x := 4; a := [2, 6]
+</pre>
+            </dd>
+        </dl>
+    </dd>
+</dl>
 
-    int GetSize (TArray x)
+<dl>
+    <dt><code>T PopLast&lt;T&gt; (TArray&lt;T&gt; x)</code></dt>
+    <dd>
+        <dl>
+            <dt>Returns and deletes the last element in <code>x</code>.</dt>
+            <dd>
+                <dl>
+                    <dt><code>TArray&lt;T&gt; x</code></dt>
+                    <dd>The Array of which we'd like to retrieve the last element</dd>
+                </dl>
+            </dd>
+            <dt>Returns</dt>
+            <dd><code>T</code> The last element in <code>x</code></dd>
+            <dt>Examples</dt>
+            <dd>
+<pre>
+                                // assume:  a == [4, 2, 6]
+x = PopLast (a)                 // x := 6, a := [4, 2]
+</pre>
+            </dd>
+        </dl>
+    </dd>
+</dl>
 
-Returns and deletes the first element in the array, shifting any further entries one position down. 
+<dl>
+    <dt><code>void PushFirst&lt;T&gt; (TArray&lt;T&gt; x, T v)</code></dt>
+    <dd>
+        <dl>
+            <dt>Adds value <code>v</code> at the beginning of <code>x</code>, shifting any further entries one position up.</dt>
+            <dd>
+                <dl>
+                    <dt><code>TArray&lt;T&gt; x</code></dt>
+                    <dd>The array onto which we'd like to push the given value</dd>
+                    <dt><code>T v</code></dt>
+                    <dd>The value being pushed</dd>
+                </dl>
+            </dd>
+            <dt>Returns</dt>
+            <dd><code>void</code> nothing</dd>
+            <dt>Examples</dt>
+            <dd>
+<pre>
+                                // assume:  a == [4, 2, 6]
+PushFirst (a, 12)               // a := [12, 4, 2, 6]
+</pre>
+            </dd>
+        </dl>
+    </dd>
+</dl>
 
-    T PopFirst<T> (TArray x)
-    
-Adds value `v` at the beginning of `x`, shifting any further entries one position up.
-
-    PushFirst<T> (TArray x, T v)   
-
-Returns and deletes the last element of `x`.
- follow somefollow some
-    T PopLast<T> (TArray x)
-
-Add value `v` at the end of `x`.
-
-    void PushLast<T> (TArray x, T v)
+<dl>
+    <dt><code>void PushLast&lt;T&gt; (TArray&lt;T&gt; x, T v)</code></dt>
+    <dd>
+        <dl>
+            <dt>Adds value <code>v</code> at the end of <code>x</code>.</dt>
+            <dd>
+                <dl>
+                    <dt><code>TArray&lt;T&gt; x</code></dt>
+                    <dd>The array onto which we'd like to push the given value</dd>
+                    <dt><code>T v</code></dt>
+                    <dd>The value being pushed</dd>
+                </dl>
+            </dd>
+            <dt>Returns</dt>
+            <dd><code>void</code> nothing</dd>
+            <dt>Examples</dt>
+            <dd>
+<pre>
+                                // assume:  a == [4, 2, 6]
+PushLast (a, 12)                // a := [4, 2, 6, 12]
+</pre>
+            </dd>
+        </dl>
+    </dd>
+</dl>
 
 
 ### Expressions (Assignments)
@@ -172,7 +276,7 @@ An expression computes a term and assigns the result to a variable. A term is a 
 
 ### Statements
 
-Statements terminate with a newline character (i.e. we allow for one statement per line). 
+Statements terminate with a newline character (i.e. we allow for one statement per line).
 We support statement blocks. They have to be enclosed in brackets.
 
 
@@ -180,14 +284,14 @@ We support statement blocks. They have to be enclosed in brackets.
 
 `If`
 
-    if (condition) 
+    if (condition)
     {
         // do stuff
     }
-    
+
 `if`/`else`
 
-    if (condition) 
+    if (condition)
     {
         // do stuff
     }
@@ -239,11 +343,11 @@ We support statement blocks. They have to be enclosed in brackets.
 
 Commands pertaining to running a simulation
 
-	void Reset ()
-	void StepBackward ()
-	void StepForward ()
-	TStackExec GetStack ()
-	TScope GetScope ()
+    void Reset ()
+    void StepBackward ()
+    void StepForward ()
+    TStackExec GetStack ()
+    TScope GetScope ()
     void HideVar (String id)
     void ShowVar (String id)
 
@@ -252,20 +356,23 @@ Commands pertaining to running a simulation
 
 We support a very basic set of animation commands.
 
+
 ### GUI
-    
+
     void SetTransparency (String id, double alpha, int mSec)
-    
-Sets the transparency of the Widget `id` to the given transparency level. Values for `alpha`:
+
+Sets the transparency of the resource `id` to the given transparency level.
+Parameters: Values for `alpha`.
 
 * 0.0: Not transparent
 * 1.0: Fully transparent
+
 
 ### Resources  
 
     void LoadImg (String id, String path, String layer)
     void CreateDisplay (String id, EDispType t, TPoint2D ref, String layer)   
-    
+
 
 ### Transforms
 
@@ -286,15 +393,15 @@ Multiple animations can be grouped. Animations that run concurrently must be enc
     >
 
 Animations that run in sequence must be enclosed in square brackets.  
-   
+
     [
         Cmd_1
         Cmd_2
         ...
-    [ 
+    [
 
 Animation blocks can be combined
-   
+
     <
         [
             MoveTo          (hunx, 2, 100, 100)
