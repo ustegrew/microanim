@@ -16,70 +16,141 @@ Programmer's remarks - for explanation purposes or entertainement. Comments...
 
 * ... will be ignored by the simulator.
 * ... can span one or more lines.
-* ... can begin in the same line as a statement or expression.
+* ... can begin in the same line with a statement or expression.
 
 
 We cater for...
 
-* Single line comments. Prepended by a double forward slash "//". Can be in it's own line or at the end of an expression or statement.
-* Multiline comments. Marked by "/*" at the start and "*/" at the end. Can span one or more lines and can start at the end of an assignment or statement.
+* Single line comments. Prepended by a double forward slash `//`. Can be in it's own line or at the end of an expression or statement.
 
-
+   ```
     // This is a single line comment
-    /* And this is
-       a multi line
-       comment
-     */
 
     x = 3                       // Single line comments can follow an expression...
     PushFirst (b, "myValue")    // ... or a statement
+   ```
 
-    /* Multi line comments can  fit into one line */
+* Multiline comments. Marked by "/*" at the start and "*/" at the end. Can span one or more lines and can start at the end of an assignment or statement.
+
+   ```
+   /* And this is
+      a multi line
+      comment
+    */
+
+    /* Multi line comments can fit into one line */
     x = 17                      /* ... and be in the same line as some executable code  */
-
+   ```
 
 ### Literals
 
-Fixed values in source code.
+Literals are fixed values in source code.
 
 
 #### Numerical values
 
 Internally, these will always be represented as a floating point number.
 
-* Decimals. A sequence of decimal digits `[0-9]`, optionally with a decimal point `.`. If there's a decimal point, it must have at least one decimal digit before it. Examples: `3`, `30.35`, `4.1`, `0.8`
-* Hexadecimals. Start with `0x` followed by a sequence of hexadecimal digits `[0-9a-fA-F]`. For hexadecimal digits we cater for upper and lower case characters. Examples: `0x3`, `0x02`, `0xA35F`, `0x2c7B`
-* Binaries. Start with '0b' followed by a sequence of binary digits `01]`. Examples: `0b0`, `0b101`, `0b1001`
+* Decimals. A sequence of decimal digits `[0-9]`, optionally with a decimal point `.`. If there's a decimal point, it must have at least one decimal digit before it.
+   ```
+   3
+   30.35
+   4.1
+   0.8
+   ```
 
+* Hexadecimals. Start with `0x` followed by a sequence of hexadecimal digits `[0-9a-fA-F]`. We allow for upper and lower case characters.
+   ```
+   0x3
+   0x02
+   0xA35F
+   0x2c7B
+   ```
+* Binaries. Start with '0b' followed by a sequence of binary digits `01]`.
+   ```
+   0b0
+   0b101
+   0b1001
+   ```
+
+
+#### Strings
+
+Sequences of characters delimited by double quotes `"`.
+
+    "This is a string"
+
+We recognize a small set of special characters, signified by an escape sequence.
+
+* `\n` - new line
+   ```
+   "Lorem ipsum\ndolor sit amet"
+   ```
+* `\"`  - double quote
+   ```
+   "He said: \"This is not a sentence.\""
+   ```
+* `\\`  - backslash
+   ```
+   "Find the file in C:\\Temp"
+   ```
 
 #### Others
 
 * Booleans. Either `true` or `false`.
 * `null`
+* Array literals. A sequence of literals enclosed in square brackets, e.g. `[1, 5, 2, 8]`. For further information, see section on arrays.
 
 
 ### Variables  
 
-Variables must be declared before they can be used. This makes them known to the simulation environment. Please note that variables are always weakly typed.
+* Variables must be declared before they can be used. This makes them known to the simulation environment.
+   ```
+   declare x        // Declare variable "x". It will be initialized to null.
+   
+   // Now x is ready to be used.
+   ```
 
-    declare name
-
-Declare variable `name`.
-
+* A newly declared variable is always initialized to `null`
+* Variables are weakly typed.
+* Variables can be part of expressions and statements.
+   ```
+   declare x                // x := null
+   x = 5                    // x := 5               (number)
+   x = x + " hello"         // x := "5 hello"        (string)
+   ```
 
 #### Arrays (mal.core.TArray)
+
+Arrays are special compount types. They can hold multiple values of any other variable type.
 
 Arrays must be declared with dimensionless square brackets.
 
     declare x[]
 
 
-Array elements can be accessed by index. Indices are zero-based.
+Arrays can be set by using an array literal.
 
-    r = x[0]            // Set r to the value stored in the first element of x.
+    declare x[]
+    
+    x = [1, 3, 7]       // Array literal.
+
+    
+Array elements can be accessed by index. The index must be written inside square brackets. 
+Indices are zero-based.
+
+    r = x[0]            // Set r to the value stored as the first element of x.
 
 
-Arrays elements readable and writable.
+The array index must be a computable expression. The index expression can be a number literal or 
+any other expression yielding a number as result.
+
+    r = x[1]            // index is 1       -> Number literal
+    r = x[i]            // index is i       -> Expression using a variable
+    r = x[i+1]          // index is i + 1   -> Expression using a variable
+
+
+Arrays elements are readable and writable.
 
     // Assume x = [15, 4, 12, 21] and i = 2
     temp   = x[i]       // temp := 12
@@ -87,21 +158,49 @@ Arrays elements readable and writable.
     x[i+1] = temp       // x := [15, 4, 21, 12]
 
 
-Arrays are dynamic, i.e. we can add or delete elements to an array at runtime.
+Arrays are dynamic, i.e. we can add/delete elements to/from an array at runtime.
 
     declare x[]         // x := []
     x[0] = "Hello"      // x := ["Hello"]
     x[1] = "World"      // x := ["Hello", "World"]
-    s     = Pop (x)     // x := ["Hello"]
+    s    = PopLast (x)  // x := ["Hello"]
 
 
-We don't allow sparse arrays (i.e. no undefined values allowed). Setting a previously unset array element will initialize all other unset elements before it to `null`.
+We don't allow sparse arrays (i.e. no undefined values allowed). Setting a previously unset 
+array element will initialize all other unset elements before it to `null`.
 
     declare x[]         // x := []
     x[0] = 5            // x := [5]
     x[3] = 10           // x := [5, null, null, 10]
 
 
+Arrays can assigned to other arrays only.
+
+    declare x[]
+    declare y[]
+    declare a;
+    
+    x = [2,4,5]
+    y = x               // allowed
+    a = x               // illegal
+
+    
+Arrays cannot be used in combination with any other variables or literals in right hand terms.
+
+    declare x[]
+    declare y[]
+    declare z[]
+    declare a
+    declare b
+    
+    x = [2, 4, 5]
+    y = [3, 5, 7]
+    
+    z = x + y           // illegal - arrays cannot be combined, even with other arrays.
+    a = x + 2           // illegal - 2 is a numeric literal
+    b = x + a           // illegal - a is not an array
+
+    
 ##### Functions for arrays
 <dl>
     <dt><code>int GetSize (TArray&lt;T&gt; x)</code></dt>
