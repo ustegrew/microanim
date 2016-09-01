@@ -35,67 +35,59 @@ Term_Numeric_Additive
 Term_Numeric_Add
     = head:Term_Numeric_Multiplicative tail:(__ Op_Add __ Term_Numeric_Multiplicative)*
     {
+        console.log ("Term_Numeric_Add: ", head, tail)
     }
     
 Term_Numeric_Sub
     = head:Term_Numeric_Multiplicative tail:(__ Op_Sub __ Term_Numeric_Multiplicative)*
     {
+        console.log ("Term_Numeric_Sub: ", head, tail)
     }
 
 Term_Numeric_Multiplicative
     = Term_Numeric_Mult
-    {
-    }
     / Term_Numeric_Div
-    {
-    }
     
 Term_Numeric_Mult
     = head:Term_Numeric_Factor tail:(__ Op_Multiply __ Term_Numeric_Factor)*
     {
+        console.log ("", head, tail);
     }
     
 Term_Numeric_Div
     = head:Term_Numeric_Factor tail:(__ Op_Divide __ Term_Numeric_Factor)*
     {
+        console.log ("", head, tail);
     }
     
 Term_Numeric_Factor
     = Term_Numeric_Bracketed
-    {
-    }
-    
     / Term_Numeric_Unary_Neg
-    {
-    }
-    
     / Variable
-    {
-    }
-    
     / L_Number
-    {
-    }
     
 Term_Numeric_Bracketed
     = "(" __ Term_Numeric_Additive __ ")"
     {
+        console.log ("Term_Numeric_Bracketed");
     }
 
 Term_Numeric_Unary_Neg
     = Op_UnaryNegative __ (Term_Numeric_Bracketed / Variable / L_Number)
     {
+        console.log ("Term_Numeric_Unary_Neg");
     }
 
 /* Variables */
 
 Variable
     = var:Identifier
-    {
-    }
 
 Identifier
-  = $([a-zA-Z_][a-zA-Z0-9_]*)
+  = id:([a-zA-Z_][a-zA-Z0-9_]*)
+  {
+      return id;
+  }
 
   
 /* ------------------- A.. Comments ------------------------  */
@@ -297,28 +289,57 @@ L_Scalar
     / L_Null
 
 L_Array
-    = "[" (__ elements:L_Scalar __)* "]"
+    = "[" head:L_Scalar tail:(__ "," __ L_Scalar __)* "]"
+    {
+    }
 
 L_Decimal
-    = literal:[0]                                                   {return literal;}
-    / literal:([1-9][0-9]*)                                         {return literal;}
-    / literal:([0-9]+[.][0-9]+)                                     {return literal;}
+    = literal:[0]                                                   
+    {
+        return 0;
+    }
+    / literal:([1-9][0-9]*)
+    {
+        return parseInt (literal);
+    }
+    / literal:([0-9]+[.][0-9]+)
+    {
+        return parseInt (literal);
+    }
 
 L_Hex
-    = literal:"0x"[0-9a-fA-F]+                                      {return literal;}
+    = "0x" literal:[0-9a-fA-F]+
+    {
+        return parseInt (literal, 16);
+    }
 
 L_Bin
-    = literal:"0b"[01]+                                             {return literal;}
+    = "0b" literal:[01]+
+    {
+        return parseInt (literal, 2);
+    }
 
 L_String
-    = literal:('"' SourceCharacter* '"')                            {return literal;}
+    = literal:('"' SourceCharacter* '"')
+    {
+        return literal;
+    }
 
 L_Boolean
-    = "true"                                                        {return true;}
-    / "false"                                                       {return false;}
+    = "true"
+    {
+        return true;
+    }
+    / "false"
+    {
+        return false;
+    }
 
 L_Null
-    = "null"                                                        {return null;}
+    = "null"
+    {
+        return null;
+    }
 
 /*
  * Unicode Character Categories
