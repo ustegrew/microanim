@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="US-ASCII">
+        <title>img-non-resize-test-page</title>
+        <script type="text/javascript">
+        	var gkSrc = "../../target/img/monkey/monkey.happy.01.png";
+        	
+            function DrawOn (idCnv, w, h)
+            {
+                var img;
+                var cnv;
+                var ctx;
+                
+                img = new Image ();
+                cnv = document.getElementById (idCnv);
+                ctx = cnv.getContext ("2d");
+                img.onload=function(e)
+                {
+                    ctx.drawImage (img, 0, 0);
+                }
+                img.src = gkSrc;
+            }
+            
+            function DoTest ()
+            {
+                DrawOn ("cnv_200_050_01");
+                DrawOn ("cnv_200_050_02");
+                DrawOn ("cnv_200_050_03");
+                DrawOn ("cnv_200_200_01");
+                DrawOn ("cnv_200_200_02");
+                DrawOn ("cnv_200_200_03");
+            }
+        </script>
+        <style>
+            .c_200_50
+            {
+                width:     200px;
+                height:     50px;
+                border:    5px solid magenta;
+            }
+            .c_200_200
+            {
+                width:     200px;
+                height:    200px;
+                border:    5px solid magenta;
+            }
+        </style>
+    </head>
+    <body onload="DoTest ();">
+        <h1>Drawing images onto a <tt>&lt;canvas&gt;</tt> element</h1>
+        <h2>Rescaling problem</h2>
+        <p>
+            The <tt>&lt;canvas&gt;</tt> elements below show the difference between 
+            drawing an image onto a canvas dimensioned by <b>HTML attributes</b> vs. 
+            a canvas dimensioned by <b>styles</b>. 
+        </p>
+        <table>
+            <tr>
+                <th>html attributes</th>
+                <th>styles (inline)</th>
+                <th>styles (style sheet)</th>
+            </tr>
+            <tr>
+                <td>
+                    <canvas id="cnv_200_050_01" width="200px" height="50px" style="border:5px solid green;"></canvas>
+                </td>
+                <td>
+                    <canvas id="cnv_200_050_02" style="width:200px;height:50px;border:5px solid blue;"></canvas>
+                </td>
+                <td>
+                    <canvas id="cnv_200_050_03" class="c_200_50"></canvas>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <canvas id="cnv_200_200_01" width="200px" height="200px" style="border:5px solid green;"></canvas>
+                </td>
+                <td>
+                    <canvas id="cnv_200_200_02" style="width:200px;height:200px;border:5px solid blue;"></canvas>
+                </td>
+                <td>
+                    <canvas id="cnv_200_200_03" class="c_200_200"></canvas>
+                </td>
+            </tr>
+        </table>
+        <h2>In summa</h2>
+        <p>
+            Don't set dimensions for a <tt>&lt;canvas&gt;</tt> element using inline styles or
+            style sheet. A canvas that has been dimensioned by styles will rescale
+            any image drawn onto it. Instead, use HTML attributes or set the &lt;canvas&gt;
+            element's <tt>width</tt> and <tt>height</tt> properties via Javascript. This 
+            will just scale the canvas, but not any image drawn onto it.
+        </p>
+        <ul>
+            <li>
+                <h3>HTML attributes</h3>
+                <pre>&lt;canvas <b>width="200px" height="100px"</b>&gt;&lt;/canvas&gt;</pre>
+            </li>
+            <li>
+                <h3>Javascript</h3>
+                <p>HTML part</p>
+                <pre>&lt;canvas id="myCanvas"&gt;&lt;/canvas&gt;></pre>
+                <p>Javascript function</p>
+                <pre>
+var cnv    = document.getElementById ("myCanvas");
+cnv.width  = "200px";
+cnv.height = "100px";
+                </pre>
+            </li>
+        </ul>
+        <p>
+            <tt>http://stackoverflow.com/a/16499919</tt>:<br/>
+            Canvas has it's own sizes. 300x150 at default. Styles (width/height) 
+            just stretch canvas like any image. So, you should strongly set sizes 
+            to what you want. You may do it through html 
+            <tt>&lt;canvas width="123" height="123"&gt;&lt;/canvas&gt;<tt>
+            or from JS code <tt>canvas.width = canvas.height = 123</tt>. Also, here 
+            you may set sizes by image properties <tt>canvas.width = img.width</tt> etc.
+        </p>
+    </body>
+</html>
