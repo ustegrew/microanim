@@ -12,7 +12,7 @@ MAL programs can contain empty lines.
 
 ### Comments
 
-Programmer's remarks - for explanation purposes or entertainment. Comments...
+Programmer's remarks - for explanation purposes or entertainement. Comments...
 
 * ... will be ignored by the simulator.
 * ... can span one or more lines.
@@ -122,7 +122,7 @@ We recognize a small set of special characters, signified by an escape sequence.
 
 #### Arrays (mal.core.TArray)
 
-Arrays are special compount types. They can hold multiple values of any other variable type.
+Arrays are special compound types. They can hold multiple values of any other variable type.
 
 Arrays must be declared with dimensionless square brackets.
 
@@ -345,8 +345,9 @@ An expression computes a term and assigns the result to a variable. A term is a 
 |               | `a - b`                           | subtraction                           |
 |               | `a * b`                           | multiplication                        |
 |               | `a / b`                           | division                              |
+|               | `a ** b`                          | power of                              |
 |               | `-a`                              | unary negation                        |
-|               | `a % b`                           | Remainder (modulo)                    |
+|               | `a % b`                           | remainder (modulo)                    |
 | Bitwise       | `a & b`                           | AND                                   |
 |               | <code>a &#124; b</code>           | OR                                    |
 |               | `a ^ b`                           | XOR                                   |
@@ -354,14 +355,14 @@ An expression computes a term and assigns the result to a variable. A term is a 
 |               | `a << b`                          | LShift                                |
 |               | `a >> b`                          | RShift                                |
 |               | `a >>> b`                         | RShift + insert zeros                 |
-| Comparison    | `a == b`                          | Loosely Equal                         |
-|               | `a === b`                         | Strictly equal                        |
-|               | `a != b`                          | Loosely unequal                       |
-|               | `a !== b`                         | Strictly unequal                      |
-|               | `a > b`                           | Greater than                          |
-|               | `a >= b`                          | Greater than, or, equal to            |
-|               | `a < b`                           | Smaller than                          |
-|               | `a <= b`                          | Smaller than, or, equal to            |
+| Comparison    | `a == b`                          | loosely Equal                         |
+|               | `a === b`                         | strictly equal                        |
+|               | `a != b`                          | loosely unequal                       |
+|               | `a !== b`                         | strictly unequal                      |
+|               | `a > b`                           | greater than                          |
+|               | `a >= b`                          | greater than, or, equal to            |
+|               | `a < b`                           | smaller than                          |
+|               | `a <= b`                          | smaller than, or, equal to            |
 | Logical       | `a && b`                          | AND                                   |
 |               | <code>a &#124;&#124; b</code>     | OR                                    |
 |               | `!b`                              | NOT                                   |
@@ -381,7 +382,7 @@ We support statement blocks. They have to be enclosed in brackets.
 
 ### Control flow
 
-`If`
+`if`
 
     if (condition)
     {
