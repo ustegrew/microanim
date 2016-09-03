@@ -18,15 +18,44 @@
  *
  */
 
+{
+    /**
+     * Returns the data in head and tail as a String.
+     * 
+     * @param String head       The array being joined up.
+     */
+    function GetJoined (head, tail)
+    {
+    }
+}
+
 /* ----------------- A.. Expressions ----------------------  */
 
 
 /* Expressions */ 
 Expression
-    = Variable __ "=" __ Term_Tree
+    = lh_assignee:Variable __ "=" __ rh_term:Term_Tree
+    {
+        var ret =
+        {
+            type:        "Expression",
+            lh_assignee: lh_assignee,
+            rh_term:     rh_term
+        };
+        
+        return ret;
+    }
 
 Term_Tree
     = Term_Numeric_Additive
+    {
+        var ret =
+        {
+            type:       "Term_Tree"
+        };
+        
+        return ret;
+    }
 
 Term_Numeric_Additive
     = Term_Numeric_Add
@@ -35,13 +64,27 @@ Term_Numeric_Additive
 Term_Numeric_Add
     = head:Term_Numeric_Multiplicative tail:(__ Op_Add __ Term_Numeric_Multiplicative)*
     {
-        console.log ("Term_Numeric_Add: ", head, tail)
+        var ret = 
+        {
+            type:       "Term_Numeric_Add",
+            head:       head,
+            tail:       tail
+        };
+        
+        return ret;
     }
     
 Term_Numeric_Sub
-    = head:Term_Numeric_Multiplicative tail:(__ Op_Sub __ Term_Numeric_Multiplicative)*
+    = head:Term_Numeric_Multiplicative tail:(__ Op_Subtract __ Term_Numeric_Multiplicative)*
     {
-        console.log ("Term_Numeric_Sub: ", head, tail)
+        var ret = 
+        {
+            type:       "Term_Numeric_Sub",
+            head:       head,
+            tail:       tail
+        };
+        
+        return ret;
     }
 
 Term_Numeric_Multiplicative
@@ -51,13 +94,27 @@ Term_Numeric_Multiplicative
 Term_Numeric_Mult
     = head:Term_Numeric_Factor tail:(__ Op_Multiply __ Term_Numeric_Factor)*
     {
-        console.log ("", head, tail);
+        var ret = 
+        {
+            type:       "Term_Numeric_Mult",
+            head:       head,
+            tail:       tail
+        };
+        
+        return ret;
     }
     
 Term_Numeric_Div
     = head:Term_Numeric_Factor tail:(__ Op_Divide __ Term_Numeric_Factor)*
     {
-        console.log ("", head, tail);
+        var ret = 
+        {
+            type:       "Term_Numeric_Div",
+            head:       head,
+            tail:       tail
+        };
+        
+        return ret;
     }
     
 Term_Numeric_Factor
@@ -69,24 +126,47 @@ Term_Numeric_Factor
 Term_Numeric_Bracketed
     = "(" __ Term_Numeric_Additive __ ")"
     {
-        console.log ("Term_Numeric_Bracketed");
+        var ret = 
+        {
+            type:       "Term_Numeric_Bracketed"
+        };
+        
+        return ret;
     }
 
 Term_Numeric_Unary_Neg
     = Op_UnaryNegative __ (Term_Numeric_Bracketed / Variable / L_Number)
     {
-        console.log ("Term_Numeric_Unary_Neg");
+        var ret = 
+        {
+            type:       "Term_Numeric_Unary_Neg"
+        };
+        
+        return ret;
     }
 
 /* Variables */
 
 Variable
-    = var:Identifier
+    = id:Identifier
+    {
+        var ret = 
+        {
+            type:       "Variable",
+            id:         id
+        };
+        
+        return ret;
+    }
 
 Identifier
-  = id:([a-zA-Z_][a-zA-Z0-9_]*)
+  = head:[a-zA-Z_] tail:[a-zA-Z0-9_]*
   {
-      return id;
+      var ret;
+      
+      ret  = head + tail.join("");
+      
+      return ret;
   }
 
   
