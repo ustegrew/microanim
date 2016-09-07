@@ -19,14 +19,7 @@
  */
 
 {
-    /**
-     * Returns the data in head and tail as a String.
-     * 
-     * @param String head       The array being joined up.
-     */
-    function GetJoined (head, tail)
-    {
-    }
+    var gStorage = {};
 }
 
 /* ----------------- A.. Expressions ----------------------  */
@@ -34,85 +27,74 @@
 
 /* Expressions */ 
 Expression
-    = lh_assignee:Variable __ "=" __ rh_term:Term_Tree
+    = lh_assignee:Variable_LH __ "=" __ rh_term:Term_Tree
     {
-        var ret =
-        {
-            type:        "Expression",
-            lh_assignee: lh_assignee,
-            rh_term:     rh_term
-        };
+        gStorage [lh_assignee] = rh_term;
         
-        return ret;
+        return gStorage;
     }
 
 Term_Tree
     = Term_Numeric_Additive
-    {
-        var ret =
-        {
-            type:       "Term_Tree"
-        };
-        
-        return ret;
-    }
 
 Term_Numeric_Additive
-    = Term_Numeric_Add
-    / Term_Numeric_Sub
-    
-Term_Numeric_Add
-    = head:Term_Numeric_Multiplicative tail:(__ Op_Add __ Term_Numeric_Multiplicative)*
+    = head:Term_Numeric_Multiplicative tail:(__ (Op_Add / Op_Subtract) __ Term_Numeric_Multiplicative)*
     {
-        var ret = 
-        {
-            type:       "Term_Numeric_Add",
-            head:       head,
-            tail:       tail
-        };
+        var i;
+        var nTail;
+        var op;
+        var arg;
+        var ret;
         
-        return ret;
-    }
-    
-Term_Numeric_Sub
-    = head:Term_Numeric_Multiplicative tail:(__ Op_Subtract __ Term_Numeric_Multiplicative)*
-    {
-        var ret = 
+        ret   = head;
+        nTail = tail.length;
+        if (nTail >= 1)
         {
-            type:       "Term_Numeric_Sub",
-            head:       head,
-            tail:       tail
-        };
+            for (i = 0; i < nTail; i++)
+            {
+                op  = tail [i][1];
+                arg = tail [i][3];
+                if (op == "+")
+                {
+                    ret = ret + arg;
+                }
+                else
+                {
+                    ret = ret - arg;
+                }
+            }
+        }
         
         return ret;
     }
 
 Term_Numeric_Multiplicative
-    = Term_Numeric_Mult
-    / Term_Numeric_Div
-    
-Term_Numeric_Mult
-    = head:Term_Numeric_Factor tail:(__ Op_Multiply __ Term_Numeric_Factor)*
+    = head:Term_Numeric_Factor tail:(__ (Op_Multiply / Op_Divide) __ Term_Numeric_Factor)*
     {
-        var ret = 
-        {
-            type:       "Term_Numeric_Mult",
-            head:       head,
-            tail:       tail
-        };
+        var i;
+        var nTail;
+        var op;
+        var arg;
+        var ret;
         
-        return ret;
-    }
-    
-Term_Numeric_Div
-    = head:Term_Numeric_Factor tail:(__ Op_Divide __ Term_Numeric_Factor)*
-    {
-        var ret = 
+        ret   = head;
+        nTail = tail.length;
+        if (nTail >= 1)
         {
-            type:       "Term_Numeric_Div",
-            head:       head,
-            tail:       tail
-        };
+            for (i = 0; i < nTail; i++)
+            {
+                op  = tail [i][1];
+                arg = tail [i][3];
+                if (op == "*")
+                {
+                    ret = ret * arg;
+                }
+                else
+                {
+                    ret = ret / arg;
+                }
+            }
+        }
         
         return ret;
     }
@@ -120,45 +102,44 @@ Term_Numeric_Div
 Term_Numeric_Factor
     = Term_Numeric_Bracketed
     / Term_Numeric_Unary_Neg
-    / Variable
+    / v:Variable_RH
+    {
+        return parseFloat (v);
+    }
     / L_Number
     
 Term_Numeric_Bracketed
-    = "(" __ Term_Numeric_Additive __ ")"
+    = "(" __ value:Term_Numeric_Additive __ ")"
     {
-        var ret = 
-        {
-            type:       "Term_Numeric_Bracketed"
-        };
+        var ret;
+        
+        ret = value;
         
         return ret;
     }
 
 Term_Numeric_Unary_Neg
-    = Op_UnaryNegative __ (Term_Numeric_Bracketed / Variable / L_Number)
+    = Op_UnaryNegative __ value:(Term_Numeric_Bracketed / Variable_RH / L_Number)
     {
-        var ret = 
-        {
-            type:       "Term_Numeric_Unary_Neg"
-        };
+        var ret;
+        
+        ret = parseFloat (value);
+        ret = 0 - ret;
         
         return ret;
     }
 
 /* Variables */
 
-Variable
+Variable_LH
+    = id:Identifier
+
+Variable_RH
     = id:Identifier
     {
-        var ret = 
-        {
-            type:       "Variable",
-            id:         id
-        };
-        
-        return ret;
+        return gStorage[id];
     }
-
+    
 Identifier
   = head:[a-zA-Z_] tail:[a-zA-Z0-9_]*
   {
@@ -374,7 +355,7 @@ L_Array
     }
 
 L_Decimal
-    = literal:[0]                                                   
+    = literal:([0])                                                   
     {
         return 0;
     }
@@ -382,9 +363,9 @@ L_Decimal
     {
         return parseInt (literal);
     }
-    / literal:([0-9]+[.][0-9]+)
+    / literal:([0-9]*[.][0-9]+)
     {
-        return parseInt (literal);
+        return parseFloat (literal);
     }
 
 L_Hex
