@@ -20,6 +20,17 @@
 
 {
     var gStorage = {};
+    var gSteps   = [];
+    
+    function Trace (step)
+    {
+        gSteps.push (step);
+    }
+    
+    function Dump ()
+    {
+        console.log (gSteps);
+    }
 }
 
 /* ----------------- A.. Expressions ----------------------  */
@@ -29,8 +40,9 @@
 Expression
     = lh_assignee:Variable_LH __ "=" __ rh_term:Term_Tree
     {
+        Trace ("Expression");
         gStorage [lh_assignee] = rh_term;
-        
+        Dump ();
         return gStorage;
     }
 
@@ -45,7 +57,8 @@ Term_Numeric_Additive
         var op;
         var arg;
         var ret;
-        
+
+        Trace ("Term_Numeric_Additive");
         ret   = head;
         nTail = tail.length;
         if (nTail >= 1)
@@ -69,7 +82,7 @@ Term_Numeric_Additive
     }
 
 Term_Numeric_Multiplicative
-    = head:Term_Numeric_Factor tail:(__ (Op_Multiply / Op_Divide) __ Term_Numeric_Factor)*
+    = head:Term_Numeric_Power tail:(__ (Op_Multiply / Op_Divide) __ Term_Numeric_Power)*
     {
         var i;
         var nTail;
@@ -77,6 +90,7 @@ Term_Numeric_Multiplicative
         var arg;
         var ret;
         
+        Trace ("Term_Numeric_Multiplicative")
         ret   = head;
         nTail = tail.length;
         if (nTail >= 1)
@@ -98,21 +112,57 @@ Term_Numeric_Multiplicative
         
         return ret;
     }
-    
-Term_Numeric_Factor
-    = Term_Numeric_Bracketed
-    / Term_Numeric_Unary_Neg
-    / v:Variable_RH
+
+Term_Numeric_Power
+    =  base:Term_Numeric_Exp tail:(__ "**" __ Term_Numeric_Exp)?
     {
-        return parseFloat (v);
+        var i;
+        var exp;
+        var ret;
+
+        Trace ("Term_Numeric_Power")
+        ret   = base;
+        if (tail != null)
+        {
+            exp = tail [3];
+            ret = Math.pow (base, exp);
+        }
+        
+        return ret;
     }
-    / L_Number
-    
+
+Term_Numeric_Exp
+    = value:Term_Numeric_Bracketed        
+    {
+        Trace ("Term_Numeric_Exp:Term_Numeric_Bracketed");
+        return value;
+    }
+    / value:Term_Numeric_Unary_Neg
+    {
+        Trace ("Term_Numeric_Exp:Term_Numeric_Unary_Neg");
+        return value;
+    }
+    / value:Variable_RH
+    {
+        var ret;
+        
+        Trace ("Term_Numeric_Exp:Variable_RH");
+        ret = parseFloat (gStorage [value]);
+        
+        return ret;
+    }
+    / value:L_Number                      
+    {
+        Trace ("Term_Numeric_Exp:L_Number");
+        return value;
+    }
+
 Term_Numeric_Bracketed
     = "(" __ value:Term_Numeric_Additive __ ")"
     {
         var ret;
         
+        Trace ("Term_Numeric_Bracketed");
         ret = value;
         
         return ret;
@@ -123,6 +173,7 @@ Term_Numeric_Unary_Neg
     {
         var ret;
         
+        Trace ("Term_Numeric_Unary_Neg");
         ret = parseFloat (value);
         ret = 0 - ret;
         
@@ -132,11 +183,16 @@ Term_Numeric_Unary_Neg
 /* Variables */
 
 Variable_LH
-    = id:Identifier
+    = id:Identifier                         
+    {
+        Trace ("Variable_LH"); 
+        return id;
+    }
 
 Variable_RH
     = id:Identifier
     {
+        Trace ("Variable_RH")
         return gStorage[id];
     }
     
@@ -144,7 +200,8 @@ Identifier
   = head:[a-zA-Z_] tail:[a-zA-Z0-9_]*
   {
       var ret;
-      
+
+      Trace ("Identifier");
       ret  = head + tail.join("");
       
       return ret;
