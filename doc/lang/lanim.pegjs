@@ -21,7 +21,7 @@
 {
     var gStorage = {};
     var gSteps   = [];
-    
+gStorage.x=3;
     function Trace (step)
     {
         gSteps.push (step);
@@ -41,7 +41,8 @@ Expression
     = lh_assignee:Variable_LH __ "=" __ rh_term:Term_Tree
     {
         Trace ("Expression");
-        gStorage [lh_assignee] = rh_term;
+
+gStorage [lh_assignee] = rh_term;
         Dump ();
         return gStorage;
     }
@@ -114,18 +115,23 @@ Term_Numeric_Multiplicative
     }
 
 Term_Numeric_Power
-    =  base:Term_Numeric_Exp tail:(__ "**" __ Term_Numeric_Exp)?
+    =  base:Term_Numeric_Exp tail:(__ "**" __ Term_Numeric_Exp)*
     {
         var i;
+        var nTail;
         var exp;
         var ret;
 
         Trace ("Term_Numeric_Power")
         ret   = base;
-        if (tail != null)
+        nTail = tail.length;
+        if (nTail >= 1)
         {
-            exp = tail [3];
-            ret = Math.pow (base, exp);
+            for (i = 0; i < nTail; i++)
+            {
+                exp = tail [i][3];
+                ret = Math.pow (ret, exp);
+            }
         }
         
         return ret;
@@ -144,12 +150,8 @@ Term_Numeric_Exp
     }
     / value:Variable_RH
     {
-        var ret;
-        
         Trace ("Term_Numeric_Exp:Variable_RH");
-        ret = parseFloat (gStorage [value]);
-        
-        return ret;
+debugger;        return value;
     }
     / value:L_Number                      
     {
