@@ -1,0 +1,18 @@
+<h1>Test bench</h1>
+<p>QUnit powered test suite... In implementation stage</p>
+
+<script src="/vendor/qunit/qunit-2.0.1.js"></script>
+<script>
+var main = (function ()
+{
+    var head;
+    var styleElement;
+    
+    styleElement                = window.document.createElement ("link");
+    styleElement.rel            = "stylesheet";
+    styleElement.type           = "text/css";
+    styleElement.href           = "/vendor/qunit/qunit-2.0.1.css"
+    head                        = document.getElementsByTagName('head')[0];
+    head.appendChild (styleElement);
+})();
+</script>
