@@ -1,6 +1,5 @@
-<h1>Test bench</h1>
-<p>QUnit powered test suite... In implementation stage</p>
-
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
 <script src="/vendor/qunit/qunit-2.0.1.js"></script>
 <script>
 var main = (function ()
@@ -14,5 +13,10 @@ var main = (function ()
     styleElement.href           = "/vendor/qunit/qunit-2.0.1.css"
     head                        = document.getElementsByTagName('head')[0];
     head.appendChild (styleElement);
+    
+    QUnit.test ("dummy test", function (assert)
+    {
+        assert.ok (1 == "1", "Dummy test: Passed!");
+    });
 })();
 </script>
