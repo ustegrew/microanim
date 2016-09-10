@@ -26,6 +26,10 @@
   text-align: center;
   background-color: #2c5f85; color: white;
 }
+a.h2-inline {
+  text-decoration: none;
+  color: white;
+}
 
 #menu {
   position: absolute;

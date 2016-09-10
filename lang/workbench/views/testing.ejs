@@ -1,11 +1,27 @@
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
+<textarea rows="25" cols="100" id="txtCases">
+</textarea>
 <script src="/vendor/qunit/qunit-2.0.1.js"></script>
 <script>
-var main = (function ()
+function onChangeTestCases ()
 {
+    var txtCases;
+    var records;
+    
+    txtCases = document.getElementById ("txtCases");
+    records  = txtCases.value;
+    localStorage.setItem ("mal.testcases", records);
+}
+
+(function ()
+{
+    var txtCases;
+    var records;
     var head;
     var styleElement;
+    var parserSource;
+    var objParser;
     
     styleElement                = window.document.createElement ("link");
     styleElement.rel            = "stylesheet";
@@ -14,9 +30,22 @@ var main = (function ()
     head                        = document.getElementsByTagName('head')[0];
     head.appendChild (styleElement);
     
+    txtCases = document.getElementById ("txtCases");
+    txtCases.onkeyup = onChangeTestCases;
+    records  = localStorage.getItem ("mal.testcases");
+    if (records != null)
+    {
+        txtCases.value = records;
+    }
+    
     QUnit.test ("dummy test", function (assert)
     {
         assert.ok (1 == "1", "Dummy test: Passed!");
     });
+    
+    parserSource = localStorage.getItem ("mal.parserSource");
+    objParser    = eval (parserSource);
+    
+    
 })();
 </script>

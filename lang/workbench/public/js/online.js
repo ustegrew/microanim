@@ -1,5 +1,7 @@
 function main ()
 {
+  window.gParser = null;
+  
   var KB      = 1024;
   var MS_IN_S = 1000;
 
@@ -58,7 +60,8 @@ function main ()
         output:   "source"
       });
       var timeAfter = (new Date).getTime();
-
+      
+      localStorage.setItem ("mal.parserSource", parserSource);
       parser = eval(parserSource);
 
       $("#build-message")
