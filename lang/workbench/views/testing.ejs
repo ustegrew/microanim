@@ -71,11 +71,42 @@
 </div>
 <textarea placeholder="Default test corpus here..." style="min-height:10em; max-width:795px; width:795px;">[
     {
-        "title":             "a=3",
-        "program":           "a=3",
-        "expectedResult":    {"a":3},
+        "title":             "a=0",
+        "program":           "a=0",
+        "expectedResult":    {"a":0},
         "expectToFail":      false
     },
+    {
+        "title":             "a=1",
+        "program":           "a=1",
+        "expectedResult":    {"a":1},
+        "expectToFail":      false
+    },
+    {
+        "title":             "a=10",
+        "program":           "a=10",
+        "expectedResult":    {"a":10},
+        "expectToFail":      false
+    },
+    {
+        "title":             "a=-0",
+        "program":           "a=-0",
+        "expectedResult":    {"a":0},
+        "expectToFail":      false
+    },
+    {
+        "title":             "a=-1",
+        "program":           "a=-1",
+        "expectedResult":    {"a":-1},
+        "expectToFail":      false
+    },
+    {
+        "title":             "a=-10",
+        "program":           "a=-10",
+        "expectedResult":    {"a":-10},
+        "expectToFail":      false
+    },
+
     {
         "title":             "a=3+1",
         "program":           "a=3+1",
