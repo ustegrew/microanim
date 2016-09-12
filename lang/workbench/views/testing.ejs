@@ -13,13 +13,13 @@
     <button id="btnRunAll" style="width:7em;">Run all</button>
 </div>
 <div>
-    <textarea id="txtCases" style="min-height:10em; max-width:795px; width:795px;">Please wait whilst loading...</textarea>
+    <textarea id="txtCases" placeholder="Test corpus here..." style="min-height:10em; max-width:795px; width:795px;"></textarea>
 </div>
 <h3>Re: Test cases...</h3>
 <ul>
     <li>Test cases will be stored in the browser's localStorage. If the test case area is empty, copy and paste the default set 
     <a href="#defTCase">below</a>, then click Save.</li>
-    <li>All test cases must be written in valid JSON format.</li>
+    <li>All test cases must be written in valid JSON format. Note: All keys must be enclosed in quotes!</li>
     <li>The whole test case corpus is written as a single array, with each element being one test case.</li>
     <li>
         <div>Each test case must be written as a valid JSON descriptor. Format of descriptor:</div>
@@ -66,10 +66,10 @@
     Copy and paste content below into the <a href="#divEdit">editing area</a>, then click "Save".
 </div>
 <div style="font-size:0.75em; font-style:italic;">
-    Testbench developers: Please keep the default corpus up to date, by editing the source code 
+    Testbench developers: Please keep the default test corpus up to date, by editing the source code 
     of this page and re-committing to the SCM repo.
 </div>
-<textarea style="width:795px; height:10em;">[
+<textarea placeholder="Default test corpus here..." style="min-height:10em; max-width:795px; width:795px;">[
     {
         "title":             "a=3",
         "program":           "a=3",
@@ -106,12 +106,12 @@
      */
     var onChangeTestCases = function ()
     {
-        /* Just enable Save button */
+        /* Just enable Save button. */
         btnSaveTests.disabled = false;
     };
 
     /**
-     * Event handler: Upon loading this page
+     * Event handler: Upon loading this page.
      */
     var onLoadPage = function ()
     {
@@ -120,7 +120,7 @@
         var styleElement;
         var parserSource;
         
-        /* Load QUnit style sheet */
+        /* Load QUnit style sheet. */
         styleElement                = window.document.createElement ("link");
         styleElement.rel            = "stylesheet";
         styleElement.type           = "text/css";
@@ -128,7 +128,7 @@
         head                        = document.getElementsByTagName('head')[0];
         head.appendChild (styleElement);
         
-        /* Create parser object from local storage */
+        /* Create parser object from local storage. */
         parserSource = localStorage.getItem ("mal.parserSource");
         objParser    = eval (parserSource);
         
@@ -143,20 +143,49 @@
             catch (e)
             {
                 objTests = [];
-                srcTests = "[]";
+                srcTests = "";
             }
             txtCases.value  = srcTests;
         }
         
-        /* Event handlers for various GUI elements */
+        /* Event handlers for various GUI elements. */
         txtCases.onkeyup        = onChangeTestCases;
+        txtCases.onkeydown      = function (e)
+        {
+            if (e.keyCode === 9)
+            {
+                /* Capture TAB key and make it insert 4 spaces at caret position    */
+                /*     Courtesy: http://stackoverflow.com/a/6140696.                */
+                var sEnd;
+                var sStart;
+                var value;
+                
+                /* Retrieve caret position and code in edit area. */
+                sStart                      = txtCases.selectionStart;
+                sEnd                        = txtCases.selectionEnd;
+                value                       = txtCases.value;
+                
+                /* Insert four spaces at caret position. */
+                value                       = value.substring (0, sStart) +
+                                            "    " +
+                                            value.substring (sEnd);
+                txtCases.value              = value;
+                
+                /* Offset caret position by four characters. */
+                txtCases.selectionEnd       = sStart + 4;
+                txtCases.selectionStart     = txtCases.selectionEnd;
+                
+                /* Prevent focus blur. */
+                e.preventDefault ();
+            }
+        }
         btnSaveTests.onclick    = SaveCorpus;
         btnRunAll.onclick       = RunTests;
         
-        /* Report successfull loading */
+        /* Report successfull loading. */
         PrintReport ("Page loaded", false, 1000);
         
-        /* Run tests */
+        /* Run tests. */
         RunTests ();
         
         /* Start auto save loop. */
@@ -175,7 +204,7 @@
     /**
      * Print message in the report bar above the test case editing area.
      *
-     * @param string    msg         The message to print
+     * @param string    msg         The message to print.
      * @param boolean   isError     If true, treat this message as an error message. If false, treat it as a normal message.
      * @param number    delay       Time (in ms) until report bar will clear. Values below 500 (0.5 s): Never clear area 
      *                              (message is persistent until next time this function is called).
@@ -220,7 +249,7 @@
         {
             for (i = 0; i < nTests; i++)
             {
-                /* Retrieve details of i-th test  */
+                /* Retrieve details of i-th test. */
                 t       = objTests [i];
                 title   = t.title;
                 prg     = t.program;
@@ -260,14 +289,14 @@
         var srcNew;
         var objRec;
         
-        /* Retrieve source code from editing area */
+        /* Retrieve source code from editing area. */
         txtCases = document.getElementById ("txtCases");
         srcNew  = txtCases.value;
         
-        /* Save source code (We will save source code if it is different from current test corpus ). */
+        /* Save source code (We will save source code if it is different from current test corpus). */
         if (srcNew !== srcTests)
         {   
-            /* We save source code if it is valid JSON data */
+            /* We save source code if it is valid JSON data. */
             try
             {
                 /* Create JS Object from source code. */
@@ -280,7 +309,7 @@
                 objTests = objRec;
                 localStorage.setItem ("mal.testcases", srcTests);
                 
-                /* Report success in the report bar above the edit area - message will auto clear after 1s */
+                /* Report success in the report bar above the edit area - message will auto clear after 1s. */
                 PrintReport ("Test cases saved", false, 1000);
             }
             catch (e)
@@ -294,6 +323,7 @@
         }
         else
         {
+            /* No changes in editing area detected. */
             PrintReport ("Nothing to save", false, 1000);
         }
         btnSaveTests.disabled = true;
