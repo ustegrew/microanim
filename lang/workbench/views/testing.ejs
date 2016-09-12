@@ -1,31 +1,120 @@
+<!-- Test report area - driven by QUnit framework -->
+<a name="tResult"></a>
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
+
+<!-- Test case editing area -->
+<a name="divEdit"></a>
 <h2>Test cases</h2>
-<div id="txtReport" style="border:1px solid silver; background:#eeeeee; border-radius:3px; width: 800px; height: 1.5em; margin-bottom: 1em; padding-left:1em;"></div>
+<div id="txtReport" style="border:1px solid silver; background:#eeeeee; border-radius:3px; width: 785px; height: 1.5em; margin-bottom: 1em; padding-left:1em;"></div>
 <div style="text-align: right; margin-bottom:5px; padding-bottom:5px;">
     <button id="btnSaveTests" style="width:7em;">Save</button>
     <span style="width: 2em;"></span>
     <button id="btnRunAll" style="width:7em;">Run all</button>
 </div>
 <div>
-    <textarea id="txtCases" rows="25" style="width:795px;">Please wait whilst loading...</textarea>
+    <textarea id="txtCases" style="min-height:10em; max-width:795px; width:795px;">Please wait whilst loading...</textarea>
 </div>
+<h3>Re: Test cases...</h3>
+<ul>
+    <li>Test cases are stored in the browser's localStorage. If the test case area is empty, copy and paste the default set 
+    <a href="#defTCase">below</a>, then click Save.</li>
+    <li>All test cases must be written in valid JSON format.</li>
+    <li>The whole test case corpus is written as a single array, with each element being one test case.</li>
+    <li>
+        <div>Each test case must be written as a valid JSON descriptor. Format of descriptor:</div>
+<pre>{
+    "title":                {String},
+    "program":              {String}
+    "expectedResult":       {Object} | {primitive}
+    "expectToFail:          {boolean}
+}</pre>
+        <div>
+            Elements denote:
+            <dl>
+                <dt><code>title</code></dt>
+                    <dd>Descriptive title, will appear next to the test result in the <a href="#tResult">test result list</a>.</dd>
+            </dl>
+            <dl>
+                <dt><code>program</code></dt>
+                    <dd>The MAL program we are testing the parser with.</dd>
+            </dl>
+            <dl>
+                <dt><code>expectedResult</code></dt>
+                    <dd>The expected result. Will be ignored if <code>expectToFail</code> is <code>true</code>.</dd>
+            </dl>
+            <dl>
+                <dt><code>expectToFail</code></dt>
+                    <dd>If <code>true</code> we expect the parsing step to fail ( e.g. <code>prg</code> has deliberate
+                    syntax error(s) ), if <code>false</code> we expect the parsing step to be successfull and 
+                    return <code>expectedResult</code>.</dd>
+            </dl>
+        </div>
+    </li>
+</ul>
 
+<!-- 
+    Default test corpus - e.g. useful when this page is loaded for the first time in a particular browser 
+    and particular machine. Developer of MAL is responsible to keep this default corpus up to date
+    by editing the JSON code inside the textarea tag. Bit crude... but it works.
+-->
+<a name="defTCase"></a>
+<h2>Default test corpus</h2>
+<div>
+    ... If the text box in the <a href="#divEdit">editing area</a> is empty (or corrupted). 
+    Copy and paste content below into the <a href="#divEdit">editing area</a>, then click "Save".
+</div>
+<div style="font-size:0.75em; font-style:italic;">
+    Testbench developers: Please keep the default 
+    corpus up to date, by editing the source code 
+    of this page and re-committing to the SCM repos. 
+    Bit crude, but it works, and not worth the time 
+    to make it better.
+</div>
+<textarea style="width:795px; height:10em;">[
+    {
+        "title":             "a=3",
+        "program":           "a=3",
+        "expectedResult":    {"a":3},
+        "expectToFail":      false
+    },
+    {
+        "title":             "a=3+1",
+        "program":           "a=3+1",
+        "expectedResult":    {"a":4},
+        "expectToFail":      false
+    }
+]</textarea>
 
+<!-- Scripting: QUnit framework -->
 <script src="/vendor/qunit/qunit-2.0.1.js"></script>
-<script>
 
+<!-- Custom scripts -->
+<script>
 (function ()
 {
+    /* GUI elements */
     var btnRunAll       = document.getElementById ("btnRunAll");
     var btnSaveTests    = document.getElementById ("btnSaveTests");
     var txtReport       = document.getElementById ("txtReport");
     var txtCases        = document.getElementById ("txtCases");
     
-    var srcTests;
-    var objParser;
-    var objTests;
+    var srcTests;       /* Current test corpus (Source)                     */
+    var objParser;      /* Parser as created from the work bench            */
+    var objTests;       /* Current test corpus (As JS objects)              */
+    
+    /**
+     * Event handler: Upon changing content in the editing area.
+     */
+    var onChangeTestCases = function ()
+    {
+        /* Just enable Save button */
+        btnSaveTests.disabled = false;
+    };
 
+    /**
+     * Event handler: Upon loading this page
+     */
     var onLoadPage = function ()
     {
         var records;
@@ -33,6 +122,7 @@
         var styleElement;
         var parserSource;
         
+        /* Load QUnit style sheet */
         styleElement                = window.document.createElement ("link");
         styleElement.rel            = "stylesheet";
         styleElement.type           = "text/css";
@@ -40,7 +130,11 @@
         head                        = document.getElementsByTagName('head')[0];
         head.appendChild (styleElement);
         
-        txtCases.onkeyup = onChangeTestCases;
+        /* Create parser object from local storage */
+        parserSource = localStorage.getItem ("mal.parserSource");
+        objParser    = eval (parserSource);
+        
+        /* Retrieve test case corpus from local storage. */
         srcTests = localStorage.getItem ("mal.testcases");
         if (srcTests != null)
         {
@@ -56,91 +150,30 @@
             txtCases.value  = srcTests;
         }
         
-        btnSaveTests.onclick = onRequestSave;
-        btnRunAll.onclick    = onRequestRunTests;
+        /* Event handlers for various GUI elements */
+        txtCases.onkeyup        = onChangeTestCases;
+        btnSaveTests.onclick    = SaveCorpus;
+        btnRunAll.onclick       = RunTests;
         
-        parserSource = localStorage.getItem ("mal.parserSource");
-        objParser    = eval (parserSource);
+        /* Report successfull loading */
+        PrintReport ("Page loaded", false, 1000);
         
-        report ("Page loaded", false, 1000);
+        /* Run tests */
+        RunTests ();
+        
+        /* Start auto save loop. */
         onTimerTick ();
     };
-    
-    var onChangeTestCases = function ()
-    {
-        btnSaveTests.disabled = false;
-    };
-    
-    var onRequestRunTests = function ()
-    {
-        var i;
-        var nTests;
-        var t;
-        var title;
-        var prg;
-        var exp;
-        var expFail;
-        var result;
-        
-        nTests = objTests.length;
-        if (nTests >= 1)
-        {
-            for (i = 0; i < nTests; i++)
-            {
-                t       = objTests [i];
-                title   = t.title;
-                prg     = t.program;
-                exp     = t.expectResult;
-                expFail = t.expectFail;
-                QUnit.test 
-                (
-                    title, 
-                    function (assert)
-                    {
-                        result = objParser.parse (prg);
-                        assert.deepEqual (result, exp);
-                    }
-                );
-            }
-        }
-    };
-    
-    var onRequestSave = function ()
-    {
-        var txtCases;
-        var srcNew;
-        var objRec;
-        
-        txtCases = document.getElementById ("txtCases");
-        srcNew  = txtCases.value;
-        if (srcNew !== srcTests)
-        {
-            try
-            {
-                srcTests    = srcNew;
-                objRec      = JSON.parse (srcTests);
-                
-                /* We survived JSON parsing - i.e. test cases are valid JSON. Now we can update storage and internal state. */
-                objTests = objRec;
-                localStorage.setItem ("mal.testcases", srcTests);
-                
-                /* Report success - will auto clear after 1s */
-                report ("Test cases saved", false, 1000);
-            }
-            catch (e)
-            {
-                /* Report failure - will show persistently */
-                report ("Faulty JSON data. (Auto) save aborted. Details: " + JSON.stringify (e), true, 0);
-            }
-        }
-        else
-        {
-            report ("Nothing to save", false, 1000);
-        }
-        btnSaveTests.disabled = true;
-    }
 
-    var report = function (msg, isError, delay)
+    /**
+     * Print message in the report bar above the test case editing area.
+     *
+     * @param string    msg         The message to print
+     * @param boolean   isError     If true, treat this message as an error message. If false, treat it as a normal message.
+     * @param number    delay       Time (in ms) until report bar will clear. Values below 500 (0.5 s): Never clear area 
+     *                              (message is persistent until next time this function is called).
+     */
+    var PrintReport = function (msg, isError, delay)
     {
         var bkgCol;
         
@@ -160,11 +193,112 @@
             );
         }
     }
-    
+
+    /**
+     * Autosave loop.
+     */
     var onTimerTick = function ()
     {
-        onRequestSave ();
+        SaveCorpus ();
         window.setTimeout (onTimerTick, 30000);
+    }
+    
+    /**
+     * Run the current test corpus.
+     */
+    var RunTests = function ()
+    {
+        var i;
+        var nTests;
+        var t;
+        var title;
+        var prg;
+        var exp;
+        var expFail;
+        var result;
+
+        nTests = objTests.length;
+        if (nTests >= 1)
+        {
+            for (i = 0; i < nTests; i++)
+            {
+                /* Retrieve details of i-th test  */
+                t       = objTests [i];
+                title   = t.title;
+                prg     = t.program;
+                exp     = t.expectedResult;
+                expFail = t.expectToFail;
+                
+                /* Perform test. Results will pop up in reporting area at the top of the page. */
+                QUnit.test 
+                (
+                    title, 
+                    function (assert)
+                    {
+                        try
+                        {
+                            result = objParser.parse (prg);
+                            assert.notOk     (expFail, "Did parsing SUCCEED as expected?");
+                            assert.deepEqual (result, exp, "Parser returned expected value?");
+                        }
+                        catch (e)
+                        {
+                            assert.ok (expFail, "Did parsing FAIL as expected?");
+                        }
+                    }
+                );
+            }
+        }
+    };
+    
+    /**
+     * Save current test corpus. This will save a verbatim copy of the content of 
+     * the editing area in the browser's localStorage - provided that the content 
+     * has changed since last save and that it is valid JSON data.
+     */
+    var SaveCorpus = function ()
+    {
+        var txtCases;
+        var srcNew;
+        var objRec;
+        
+        /* Retrieve source code from editing area */
+        txtCases = document.getElementById ("txtCases");
+        srcNew  = txtCases.value;
+        
+        /* Save source code (We will save source code if it is different from current test corpus ). */
+        if (srcNew !== srcTests)
+        {   
+            /* We save source code if it is valid JSON data */
+            try
+            {
+                /* Create JS Object from source code. */
+                objRec = JSON.parse (srcTests);
+                
+                /* We survived JSON parsing - i.e. test cases are valid JSON. 
+                 * Now we can commit source code as new (current) test corpus.
+                 */
+                srcTests = srcNew;
+                objTests = objRec;
+                localStorage.setItem ("mal.testcases", srcTests);
+                
+                /* Report success in the report bar above the edit area - message will auto clear after 1s */
+                PrintReport ("Test cases saved", false, 1000);
+            }
+            catch (e)
+            {
+                /* JSON parsing failed, i.e. source code is not valid JSON data. 
+                 * We report failure in the report bar - message will show persistently 
+                 * until next save attempt.
+                 */
+                PrintReport ("Faulty JSON data. (Auto) save aborted. Details: " + e.message, true, 0);
+            }
+        }
+        else
+        {
+            PrintReport ("Nothing to save", false, 1000);
+        }
+        btnSaveTests.disabled = true;
     }
     
     onLoadPage ();
