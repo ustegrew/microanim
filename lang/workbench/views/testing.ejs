@@ -1,51 +1,172 @@
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
-<textarea rows="25" cols="100" id="txtCases">
-</textarea>
+<h2>Test cases</h2>
+<div id="txtReport" style="border:1px solid silver; background:#eeeeee; border-radius:3px; width: 800px; height: 1.5em; margin-bottom: 1em; padding-left:1em;"></div>
+<div style="text-align: right; margin-bottom:5px; padding-bottom:5px;">
+    <button id="btnSaveTests" style="width:7em;">Save</button>
+    <span style="width: 2em;"></span>
+    <button id="btnRunAll" style="width:7em;">Run all</button>
+</div>
+<div>
+    <textarea id="txtCases" rows="25" style="width:795px;">Please wait whilst loading...</textarea>
+</div>
+
+
 <script src="/vendor/qunit/qunit-2.0.1.js"></script>
 <script>
-function onChangeTestCases ()
-{
-    var txtCases;
-    var records;
-    
-    txtCases = document.getElementById ("txtCases");
-    records  = txtCases.value;
-    localStorage.setItem ("mal.testcases", records);
-}
 
 (function ()
 {
-    var txtCases;
-    var records;
-    var head;
-    var styleElement;
-    var parserSource;
+    var btnRunAll       = document.getElementById ("btnRunAll");
+    var btnSaveTests    = document.getElementById ("btnSaveTests");
+    var txtReport       = document.getElementById ("txtReport");
+    var txtCases        = document.getElementById ("txtCases");
+    
+    var srcTests;
     var objParser;
-    
-    styleElement                = window.document.createElement ("link");
-    styleElement.rel            = "stylesheet";
-    styleElement.type           = "text/css";
-    styleElement.href           = "/vendor/qunit/qunit-2.0.1.css"
-    head                        = document.getElementsByTagName('head')[0];
-    head.appendChild (styleElement);
-    
-    txtCases = document.getElementById ("txtCases");
-    txtCases.onkeyup = onChangeTestCases;
-    records  = localStorage.getItem ("mal.testcases");
-    if (records != null)
+    var objTests;
+
+    var onLoadPage = function ()
     {
-        txtCases.value = records;
+        var records;
+        var head;
+        var styleElement;
+        var parserSource;
+        
+        styleElement                = window.document.createElement ("link");
+        styleElement.rel            = "stylesheet";
+        styleElement.type           = "text/css";
+        styleElement.href           = "/vendor/qunit/qunit-2.0.1.css"
+        head                        = document.getElementsByTagName('head')[0];
+        head.appendChild (styleElement);
+        
+        txtCases.onkeyup = onChangeTestCases;
+        srcTests = localStorage.getItem ("mal.testcases");
+        if (srcTests != null)
+        {
+            try
+            {
+                objTests = JSON.parse (srcTests);
+            }
+            catch (e)
+            {
+                objTests = [];
+                srcTests = "[]";
+            }
+            txtCases.value  = srcTests;
+        }
+        
+        btnSaveTests.onclick = onRequestSave;
+        btnRunAll.onclick    = onRequestRunTests;
+        
+        parserSource = localStorage.getItem ("mal.parserSource");
+        objParser    = eval (parserSource);
+        
+        report ("Page loaded", false, 1000);
+        onTimerTick ();
+    };
+    
+    var onChangeTestCases = function ()
+    {
+        btnSaveTests.disabled = false;
+    };
+    
+    var onRequestRunTests = function ()
+    {
+        var i;
+        var nTests;
+        var t;
+        var title;
+        var prg;
+        var exp;
+        var expFail;
+        var result;
+        
+        nTests = objTests.length;
+        if (nTests >= 1)
+        {
+            for (i = 0; i < nTests; i++)
+            {
+                t       = objTests [i];
+                title   = t.title;
+                prg     = t.program;
+                exp     = t.expectResult;
+                expFail = t.expectFail;
+                QUnit.test 
+                (
+                    title, 
+                    function (assert)
+                    {
+                        result = objParser.parse (prg);
+                        assert.deepEqual (result, exp);
+                    }
+                );
+            }
+        }
+    };
+    
+    var onRequestSave = function ()
+    {
+        var txtCases;
+        var srcNew;
+        var objRec;
+        
+        txtCases = document.getElementById ("txtCases");
+        srcNew  = txtCases.value;
+        if (srcNew !== srcTests)
+        {
+            try
+            {
+                srcTests    = srcNew;
+                objRec      = JSON.parse (srcTests);
+                
+                /* We survived JSON parsing - i.e. test cases are valid JSON. Now we can update storage and internal state. */
+                objTests = objRec;
+                localStorage.setItem ("mal.testcases", srcTests);
+                
+                /* Report success - will auto clear after 1s */
+                report ("Test cases saved", false, 1000);
+            }
+            catch (e)
+            {
+                /* Report failure - will show persistently */
+                report ("Faulty JSON data. (Auto) save aborted. Details: " + JSON.stringify (e), true, 0);
+            }
+        }
+        else
+        {
+            report ("Nothing to save", false, 1000);
+        }
+        btnSaveTests.disabled = true;
+    }
+
+    var report = function (msg, isError, delay)
+    {
+        var bkgCol;
+        
+        bkgCol = isError  ?  "#ffeeee" : "#eeffee";
+        txtReport.style.backgroundColor = bkgCol;
+        txtReport.innerHTML = "<span>" + msg + "</span>";
+        if (delay >= 500)
+        {
+            window.setTimeout 
+            (
+                function ()
+                {
+                    txtReport.style.backgroundColor = "#eeeeee";
+                    txtReport.innerHTML = "";
+                },
+                delay
+            );
+        }
     }
     
-    QUnit.test ("dummy test", function (assert)
+    var onTimerTick = function ()
     {
-        assert.ok (1 == "1", "Dummy test: Passed!");
-    });
+        onRequestSave ();
+        window.setTimeout (onTimerTick, 30000);
+    }
     
-    parserSource = localStorage.getItem ("mal.parserSource");
-    objParser    = eval (parserSource);
-    
-    
+    onLoadPage ();
 })();
 </script>
