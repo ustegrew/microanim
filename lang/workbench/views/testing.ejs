@@ -89,6 +89,7 @@
 
 <!-- Custom scripts -->
 <script>
+var gResults = [];
 (function ()
 {
     /* GUI elements */
@@ -237,43 +238,74 @@
     {
         var i;
         var nTests;
+        var p;
+        var r;
         var t;
-        var title;
-        var prg;
-        var exp;
-        var expFail;
-        var result;
-
-        nTests = objTests.length;
+        var src;
+        var callbacks;
+                        
+        callbacks       = [];
+        nTests          = objTests.length;
         if (nTests >= 1)
         {
             for (i = 0; i < nTests; i++)
             {
-                /* Retrieve details of i-th test. */
-                t       = objTests [i];
-                title   = t.title;
-                prg     = t.program;
-                exp     = t.expectedResult;
-                expFail = t.expectToFail;
-                
-                /* Perform test. Results will pop up in reporting area at the top of the page. */
-                QUnit.test 
-                (
-                    title, 
-                    function (assert)
+                /* Create result record of i-th test. */
+                t = objTests[i];
+                p = t.program;
+                try
+                {
+                    r           = objParser.parse (p);
+                    gResults[i] =
                     {
-                        try
-                        {
-                            result = objParser.parse (prg);
-                            assert.notOk     (expFail, "Did parsing SUCCEED as expected?");
-                            assert.deepEqual (result, exp, "Parser returned expected value?");
-                        }
-                        catch (e)
-                        {
-                            assert.ok (expFail, "Did parsing FAIL as expected?");
-                        }
+                        title:          t.title,
+                        prg:            p,
+                        exp:            t.expectedResult,
+                        expFail:        t.expectToFail,
+                        result:         r,
+                        hasFailed:      false
                     }
-                );
+                }
+                catch (e)
+                {
+                    gResults[i] =
+                    {
+                        title:          t.title,
+                        prg:            p,
+                        exp:            t.expectedResult,
+                        expFail:        t.expectToFail,
+                        result:         null,
+                        hasFailed:      true
+                    }
+                }
+                
+                /* Create test callback. 
+                 * Note: JS scopes are function-level, not block-level - i.e. we can't simply use 
+                 *       the for loop counter inside a function closure. We create a function with 
+                 *       index i hardcoded into it. Otherwise, all tests will run with the last test case 
+                 *       as that one is within the function's lexical scope when the tests are performed.
+                 *       With the result that all but the last test result will be wrong.
+                 */
+                 src =
+                    "var r = gResults [" + i + "];"                                                                         + "\n" +
+                    "if (r.expFail)"                                                                                        + "\n" +
+                    "{"                                                                                                     + "\n" +
+                    "    assert.ok           (r.hasFailed, \"Did parsing FAIL as expected?\")"                              + "\n" +
+                    "}"                                                                                                     + "\n" +
+                    "else"                                                                                                  + "\n" +
+                    "{"                                                                                                     + "\n" +
+                    "    assert.notOk        (r.hasFailed, \"Did parsing SUCCEED as expected?\");"                          + "\n" +
+                    "    assert.deepEqual    (r.result, r.exp, \"Did the parser return the expected value?\");"             + "\n" +
+                    "}"
+                callbacks[i] = new Function ("assert", src);
+                console.log (src);
+            }
+            
+            /* Run tests */
+            for (i = 0; i < nTests; i++)
+            {
+                t = objTests [i];
+                QUnit.test (t.title, callbacks[i]);
             }
         }
     };
