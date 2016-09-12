@@ -17,7 +17,7 @@
 </div>
 <h3>Re: Test cases...</h3>
 <ul>
-    <li>Test cases are stored in the browser's localStorage. If the test case area is empty, copy and paste the default set 
+    <li>Test cases will be stored in the browser's localStorage. If the test case area is empty, copy and paste the default set 
     <a href="#defTCase">below</a>, then click Save.</li>
     <li>All test cases must be written in valid JSON format.</li>
     <li>The whole test case corpus is written as a single array, with each element being one test case.</li>
@@ -164,6 +164,15 @@
     };
 
     /**
+     * Autosave loop.
+     */
+    var onTimerTick = function ()
+    {
+        SaveCorpus ();
+        window.setTimeout (onTimerTick, 30000);
+    }
+    
+    /**
      * Print message in the report bar above the test case editing area.
      *
      * @param string    msg         The message to print
@@ -192,15 +201,6 @@
         }
     }
 
-    /**
-     * Autosave loop.
-     */
-    var onTimerTick = function ()
-    {
-        SaveCorpus ();
-        window.setTimeout (onTimerTick, 30000);
-    }
-    
     /**
      * Run the current test corpus.
      */
