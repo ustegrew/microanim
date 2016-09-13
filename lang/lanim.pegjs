@@ -10,7 +10,8 @@
  * David Majda [3] without whom this parser would have been much
  * more difficult to design.
  *
- * PH, ver: 0.1, 2016-09-13
+ * Version:
+ *     PH, 2016-09-13 10-57-58
  * 
  * --------
  *
@@ -18,7 +19,6 @@
  * [2] https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs
  * [3] http://majda.cz/
  *
- * 
  */
 
 {
@@ -315,6 +315,97 @@ EscBackslash
     = "\\\\"
 
 
+/* Literals */
+
+L_Number
+    = n:L_Hex     {Trace ("L_Number::L_Hex"); return n;}
+    / n:L_Bin     {Trace ("L_Number::L_Bin"); return n;}
+    / n:L_Decimal {Trace ("L_Number::L_Decimal"); return n;}
+    
+
+L_Scalar
+    = L_Decimal
+    / L_Hex
+    / L_Bin
+    / L_String
+    / L_Boolean
+    / L_Null
+
+L_Array
+    = "[" head:L_Scalar tail:(__ "," __ L_Scalar __)* "]"
+    {
+    }
+
+L_Decimal
+    = l0:[0-9]* l1:[.] l2:[0-9]+
+    {
+        var vx;
+        var ret;
+        
+        vx  = l0.join ("") + l1 + l2.join("");
+        ret = parseFloat (vx);
+
+        return ret;
+    }
+    / l0:[0-9]*
+    {
+        var vx;
+        var ret;
+        
+        vx  = l0.join("");
+        ret = parseInt (vx);
+
+        return ret;
+    }
+
+L_Hex
+    = "0x" l0:[0-9a-fA-F]+
+    {
+        var vx;
+        var ret;
+        
+        Trace ("L_Hex");
+        vx  = l0.join ("");
+        ret = parseInt (vx, 16);
+
+        return ret;
+    }
+
+L_Bin
+    = "0b" l0:[01]+
+    {
+        var vx;
+        var ret;
+        
+        vx  = l0.join ("");
+        ret = parseInt (vx, 2);
+
+        return ret;
+    }
+
+L_String
+    = literal:('"' SourceCharacter* '"')
+    {
+        return literal;
+    }
+
+L_Boolean
+    = "true"
+    {
+        return true;
+    }
+    / "false"
+    {
+        return false;
+    }
+
+L_Null
+    = "null"
+    {
+        return null;
+    }
+
+
 /* Operators */
 
 Op_Add
@@ -394,101 +485,6 @@ Op_UnaryBinaryNOT
 
 Op_UnaryLogicalNOT
     = "!"
-
-
-/* Literals */
-
-L_Number
-    = n:L_Hex     {Trace ("L_Number::L_Hex"); return n;}
-    / n:L_Bin     {Trace ("L_Number::L_Bin"); return n;}
-    / n:L_Decimal {Trace ("L_Number::L_Decimal"); return n;}
-    
-
-L_Scalar
-    = L_Decimal
-    / L_Hex
-    / L_Bin
-    / L_String
-    / L_Boolean
-    / L_Null
-
-L_Array
-    = "[" head:L_Scalar tail:(__ "," __ L_Scalar __)* "]"
-    {
-    }
-
-L_Decimal
-    = literal:([0])                                                   
-    {
-        return 0;
-    }
-    / l0:[1-9] l1:[0-9]*
-    {
-        var vx;
-        var ret;
-        
-        vx  = l0 + l1.join("");
-        ret = parseInt (vx);
-
-        return ret;
-    }
-    / l0:[0-9]* l1:[.] l2:[0-9]+
-    {
-        var vx;
-        var ret;
-        
-        vx  = l0.join ("") + l1 + l2.join("");
-        ret = parseFloat (vx);
-
-        return ret;
-    }
-
-L_Hex
-    = "0x" l0:[0-9a-fA-F]+
-    {
-        var vx;
-        var ret;
-        
-        Trace ("L_Hex");
-        vx  = l0.join ("");
-        ret = parseInt (vx, 16);
-
-        return ret;
-    }
-
-L_Bin
-    = "0b" l0:[01]+
-    {
-        var vx;
-        var ret;
-        
-        vx  = l0.join ("");
-        ret = parseInt (vx, 2);
-
-        return ret;
-    }
-
-L_String
-    = literal:('"' SourceCharacter* '"')
-    {
-        return literal;
-    }
-
-L_Boolean
-    = "true"
-    {
-        return true;
-    }
-    / "false"
-    {
-        return false;
-    }
-
-L_Null
-    = "null"
-    {
-        return null;
-    }
 
 /*
  * Unicode Character Categories
