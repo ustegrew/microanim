@@ -10,18 +10,21 @@
  * David Majda [3] without whom this parser would have been much
  * more difficult to design.
  *
+ * PH, ver: 0.1, 2016-09-13
+ * 
  * --------
  *
  * [1] http://pegjs.org/
  * [2] https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs
  * [3] http://majda.cz/
  *
+ * 
  */
 
 {
     var gStorage = {};
     var gSteps   = [];
-gStorage.x=3;
+
     function Trace (step)
     {
         gSteps.push (step);
@@ -29,7 +32,7 @@ gStorage.x=3;
     
     function Dump ()
     {
-        console.log (gSteps);
+       console.log (gSteps);
     }
 }
 
@@ -42,7 +45,7 @@ Expression
     {
         Trace ("Expression");
 
-gStorage [lh_assignee] = rh_term;
+        gStorage [lh_assignee] = rh_term;
         Dump ();
         return gStorage;
     }
@@ -174,7 +177,7 @@ Term_Numeric_Unary_Neg
     = Op_UnaryNegative __ value:(Term_Numeric_Bracketed / Variable_RH / L_Number)
     {
         var ret;
-        
+
         Trace ("Term_Numeric_Unary_Neg");
         ret = parseFloat (value);
         ret = 0 - ret;
@@ -396,9 +399,10 @@ Op_UnaryLogicalNOT
 /* Literals */
 
 L_Number
-    = L_Decimal
-    / L_Hex
-    / L_Bin
+    = n:L_Hex     {Trace ("L_Number::L_Hex"); return n;}
+    / n:L_Bin     {Trace ("L_Number::L_Bin"); return n;}
+    / n:L_Decimal {Trace ("L_Number::L_Decimal"); return n;}
+    
 
 L_Scalar
     = L_Decimal
@@ -418,25 +422,50 @@ L_Decimal
     {
         return 0;
     }
-    / literal:([1-9][0-9]*)
+    / l0:[1-9] l1:[0-9]*
     {
-        return parseInt (literal);
+        var vx;
+        var ret;
+        
+        vx  = l0 + l1.join("");
+        ret = parseInt (vx);
+
+        return ret;
     }
-    / literal:([0-9]*[.][0-9]+)
+    / l0:[0-9]* l1:[.] l2:[0-9]+
     {
-        return parseFloat (literal);
+        var vx;
+        var ret;
+        
+        vx  = l0.join ("") + l1 + l2.join("");
+        ret = parseFloat (vx);
+
+        return ret;
     }
 
 L_Hex
-    = "0x" literal:[0-9a-fA-F]+
+    = "0x" l0:[0-9a-fA-F]+
     {
-        return parseInt (literal, 16);
+        var vx;
+        var ret;
+        
+        Trace ("L_Hex");
+        vx  = l0.join ("");
+        ret = parseInt (vx, 16);
+
+        return ret;
     }
 
 L_Bin
-    = "0b" literal:[01]+
+    = "0b" l0:[01]+
     {
-        return parseInt (literal, 2);
+        var vx;
+        var ret;
+        
+        vx  = l0.join ("");
+        ret = parseInt (vx, 2);
+
+        return ret;
     }
 
 L_String

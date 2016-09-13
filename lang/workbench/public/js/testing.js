@@ -219,11 +219,11 @@ window.MAL.test.run.program = function ()
                     "var r = window.MAL.test.run.results [" + i + "];"                                                      + "\n" +
                     "if (r.expFail)"                                                                                        + "\n" +
                     "{"                                                                                                     + "\n" +
-                    "    assert.ok           (r.hasFailed, \"Did parsing FAIL as expected?\")"                              + "\n" +
+                    "    assert.ok           (r.hasFailed, \"Did parsing FAIL as expected [flag must be TRUE]?\")"          + "\n" +
                     "}"                                                                                                     + "\n" +
                     "else"                                                                                                  + "\n" +
                     "{"                                                                                                     + "\n" +
-                    "    assert.notOk        (r.hasFailed, \"Did parsing SUCCEED as expected?\");"                          + "\n" +
+                    "    assert.notOk        (r.hasFailed, \"Did parsing SUCCEED as expected [flag must be FALSE]?\");"     + "\n" +
                     "    assert.deepEqual    (r.result, r.exp, \"Did the parser return the expected value?\");"             + "\n" +
                     "}"
                 window.MAL.test.run.callbacks[i] = new Function ("assert", src);
