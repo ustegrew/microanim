@@ -50,7 +50,7 @@ window.MAL.test.run.program = function ()
         btnRunAll.onclick = RunTests;
         
         /* Report successfull loading. */
-        PrintReport ("Page loaded", false, 1000);
+        PrintReport ("Page loaded", false, 5000);
         
         /* Run tests. */
         RunTests ();
@@ -158,7 +158,10 @@ window.MAL.test.run.program = function ()
                     "else"                                                                                                  + "\n" +
                     "{"                                                                                                     + "\n" +
                     "    assert.notOk        (r.hasFailed, \"Did parsing SUCCEED as expected [flag must be FALSE]?\");"     + "\n" +
-                    "    assert.deepEqual    (r.result, r.exp, \"Did the parser return the expected value?\");"             + "\n" +
+                    "    if (! r.hasFailed)"                                                                                + "\n" +
+                    "    {"                                                                                                 + "\n" +
+                    "        assert.deepEqual    (r.result, r.exp, \"Did the parser return the expected value?\");"         + "\n" +
+                    "    }"                                                                                                 + "\n" +
                     "}"
                 window.MAL.test.run.callbacks[i] = new Function ("assert", src);
             }
