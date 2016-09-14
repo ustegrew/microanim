@@ -25,28 +25,62 @@
     var gStorage = {};
     var gSteps   = [];
 
-    function Trace (step)
+    /**
+     * Asserts that variable <code>id</code> has (not) been declared. If assertion fails,
+     * throw an exception.
+     * 
+     * @param string    id              The name (id) of the variable queried.
+     * @param boolean   doInverse       If <code>false</code>, assert that the variable 
+     *                                  has been declared. If <code>true</code>, assert
+     *                                  that the variable has <b>not</b>.been declared.
+     */
+    function _AssertDeclared (id, doInverse)
     {
-        gSteps.push (step);
-    }
-    
-    function Dump ()
-    {
-       console.log (gSteps);
+        var kUndef = "undefined";
+        
+        var isErr;
+        var msg;
+        
+        if (doInverse)
+        {
+            isErr = (typeof id  != kUndef);
+        }
+        else
+        {
+            isErr = (typeof id == kUndef);
+        }
+        
+        if (isErr)
+        {
+            msg  = doInverse  ?  "Already declared"  :  "Undeclared";
+            msg += ": '" + id + "'";
+            throw (msg);
+        }
     }
 }
+
+/* ----------------- A.. Program ----------------------  */
+
+Program
+    = Declaration* Expression*
+
+/* ----------------- A.. Declaration ----------------------  */
+
+Declaration
+    = __ Tok_Declare __ id:Identifier __ EOL
+    {
+        _AssertDeclared (id, true);
+        gStorage[id] = null;
+    }
 
 /* ----------------- A.. Expressions ----------------------  */
 
 
 /* Expressions */ 
 Expression
-    = lh_assignee:Variable_LH __ "=" __ rh_term:Term_Tree
+    = __ lh_assignee:Variable_LH __ "=" __ rh_term:Term_Tree __ EOL
     {
-        Trace ("Expression");
-
         gStorage [lh_assignee] = rh_term;
-        Dump ();
         return gStorage;
     }
 
@@ -62,7 +96,6 @@ Term_Numeric_Additive
         var arg;
         var ret;
 
-        Trace ("Term_Numeric_Additive");
         ret   = head;
         nTail = tail.length;
         if (nTail >= 1)
@@ -94,7 +127,6 @@ Term_Numeric_Multiplicative
         var arg;
         var ret;
         
-        Trace ("Term_Numeric_Multiplicative")
         ret   = head;
         nTail = tail.length;
         if (nTail >= 1)
@@ -125,7 +157,6 @@ Term_Numeric_Power
         var exp;
         var ret;
 
-        Trace ("Term_Numeric_Power")
         ret   = base;
         nTail = tail.length;
         if (nTail >= 1)
@@ -143,22 +174,18 @@ Term_Numeric_Power
 Term_Numeric_Exp
     = value:Term_Numeric_Bracketed        
     {
-        Trace ("Term_Numeric_Exp:Term_Numeric_Bracketed");
         return value;
     }
     / value:Term_Numeric_Unary_Neg
     {
-        Trace ("Term_Numeric_Exp:Term_Numeric_Unary_Neg");
         return value;
     }
     / value:Variable_RH
     {
-        Trace ("Term_Numeric_Exp:Variable_RH");
         return value;
     }
     / value:L_Number                      
     {
-        Trace ("Term_Numeric_Exp:L_Number");
         return value;
     }
 
@@ -167,7 +194,6 @@ Term_Numeric_Bracketed
     {
         var ret;
         
-        Trace ("Term_Numeric_Bracketed");
         ret = value;
         
         return ret;
@@ -178,7 +204,6 @@ Term_Numeric_Unary_Neg
     {
         var ret;
 
-        Trace ("Term_Numeric_Unary_Neg");
         ret = parseFloat (value);
         ret = 0 - ret;
         
@@ -190,14 +215,12 @@ Term_Numeric_Unary_Neg
 Variable_LH
     = id:Identifier                         
     {
-        Trace ("Variable_LH"); 
         return id;
     }
 
 Variable_RH
     = id:Identifier
     {
-        Trace ("Variable_RH")
         return gStorage[id];
     }
     
@@ -206,7 +229,6 @@ Identifier
   {
       var ret;
 
-      Trace ("Identifier");
       ret  = head + tail.join("");
       
       return ret;
@@ -223,7 +245,7 @@ MultiLineComment
   = "/*" (!"*/" SourceCharacter)* "*/"
 
 SingleLineComment
-  = "//" (!LineTerminator SourceCharacter)*
+  = "//" (!EOL SourceCharacter)*
 
 /* ----------------- A.. Lexemes ----------------------  */
 
@@ -299,11 +321,11 @@ WhiteSpace "whitespace"
     / "\uFEFF"
     / Zs
 
-LineTerminator
+EOL
     = [\n\r\u2028\u2029]
     
 __
-  = (WhiteSpace / LineTerminator)*
+  = (WhiteSpace / EOL)*
   
 EscNl
     = "\\n"

@@ -57,7 +57,8 @@ function main ()
       var parserSource = PEG.buildParser(getGrammar(), {
         cache:    $("#option-cache").is(":checked"),
         optimize: $("#option-optimize").val(),
-        output:   "source"
+        output:   "source",
+        trace:    $("#option-trace").is(":checked")
       });
       var timeAfter = (new Date).getTime();
       
