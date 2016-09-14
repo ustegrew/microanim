@@ -1,6 +1,6 @@
 if (typeof window.MAL == "undefined")
 {
-    throw ("Missing include file: '/public/js/testing_defaultCorpus.js'. Please include this page before including this one.");
+    throw ("Missing test corpus. Has file '/js/testing_corpus.js' been included before this file ('/js/testing.js')?");
 }
 
 window.MAL.test.currentCorpus = [];
@@ -14,24 +14,12 @@ window.MAL.test.run.program = function ()
 {
     /* GUI elements */
     var btnRunAll                   = document.getElementById ("btnRunAll");
-    var btnSaveTests                = document.getElementById ("btnSaveTests");
     var txtReport                   = document.getElementById ("txtReport");
-    var txtCurrentTestCorpus                    = document.getElementById ("txtCurrentTestCorpus");
-    var txtDefaultTestCorpus        = document.getElementById ("txtDefaultTestCorpus");
+    var txtTestCorpus               = document.getElementById ("txtTestCorpus");
     
-    var srcTests;       /* Current test corpus (Source)                     */
     var objParser;      /* Parser as created from the work bench            */
     var objTests;       /* Current test corpus (As JS objects)              */
     
-    /**
-     * Event handler: Upon changing content in the editing area.
-     */
-    var onChangeTestCases = function ()
-    {
-        /* Just enable Save button. */
-        btnSaveTests.disabled = false;
-    };
-
     /**
      * Event handler: Upon loading this page.
      */
@@ -53,85 +41,20 @@ window.MAL.test.run.program = function ()
         /* Create parser object from local storage. */
         parserSource = localStorage.getItem ("mal.parserSource");
         objParser    = eval (parserSource);
+        objTests     = window.MAL.test.corpus;
         
-        /* Write default test corpus into resp. text box. */
-        txtDefaultTestCorpus.value  = JSON.stringify (window.MAL.test.defaultCorpus, null, 4);
-        
-        /* Retrieve test case corpus from local storage. */
-        srcTests = localStorage.getItem ("mal.testcases");
-        if (srcTests != null)
-        {
-            try
-            {
-                objTests = JSON.parse (srcTests);
-            }
-            catch (e)
-            {
-                objTests = [];      /* [100] */
-                srcTests = "";
-                PrintReport 
-                (
-                    "Failed to load current test corpus from localStorage (corrupted?). " + 
-                    "<a href='defTCase'>Default test corpus</a> is available",
-                    true, 
-                    0
-                );
-            }
-            txtCurrentTestCorpus.value  = srcTests;
-        }
+        /* Write default test corpus into resp. text box. [110] */
+        txtTestCorpus.value  = JSON.stringify (window.MAL.test.corpus, null, 4);
         
         /* Event handlers for various GUI elements. */
-        txtCurrentTestCorpus.onkeyup        = onChangeTestCases;
-        txtCurrentTestCorpus.onkeydown      = function (e)
-        {
-            if (e.keyCode === 9)
-            {
-                /* Capture TAB key and make it insert 4 spaces at caret position    */
-                /*     Courtesy: http://stackoverflow.com/a/6140696.                */
-                var sEnd;
-                var sStart;
-                var value;
-                
-                /* Retrieve caret position and code in edit area. */
-                sStart                      = txtCurrentTestCorpus.selectionStart;
-                sEnd                        = txtCurrentTestCorpus.selectionEnd;
-                value                       = txtCurrentTestCorpus.value;
-                
-                /* Insert four spaces at caret position. */
-                value                       = value.substring (0, sStart) +
-                                            "    " +
-                                            value.substring (sEnd);
-                txtCurrentTestCorpus.value  = value;
-                
-                /* Offset caret position by four characters. */
-                txtCurrentTestCorpus.selectionEnd       = sStart + 4;
-                txtCurrentTestCorpus.selectionStart     = txtCurrentTestCorpus.selectionEnd;
-                
-                /* Prevent focus blur. */
-                e.preventDefault ();
-            }
-        }
-        btnSaveTests.onclick    = SaveCorpus;
-        btnRunAll.onclick       = RunTests;
+        btnRunAll.onclick = RunTests;
         
         /* Report successfull loading. */
         PrintReport ("Page loaded", false, 1000);
         
         /* Run tests. */
         RunTests ();
-        
-        /* Start auto save loop. */
-        onTimerTick ();
     };
-
-    /**
-     * Autosave loop.
-     */
-    var onTimerTick = function ()
-    {
-        SaveCorpus ();
-        window.setTimeout (onTimerTick, 30000);
-    }
     
     /**
      * Print message in the report bar above the test case editing area.
@@ -169,9 +92,10 @@ window.MAL.test.run.program = function ()
     {
         var i;
         var nTests;
-        var p;
-        var r;
-        var t;
+        var prg;
+        var res0;
+        var res1;
+        var test;
         var src;
                         
         nTests = objTests.length;
@@ -180,18 +104,28 @@ window.MAL.test.run.program = function ()
             for (i = 0; i < nTests; i++)
             {
                 /* Create result record of i-th test. */
-                t = objTests[i];
-                p = t.program;
+                test = objTests[i];
+                prg = test.program;
                 try
                 {
-                    r = objParser.parse (p);
+                    /* [100] */
+                    if (typeof test.expectedResult === "function")
+                    {
+                        res0 = test.expectedResult ();
+                    }
+                    else
+                    {
+                        res0 = test.expectedResult;
+                    }
+                    
+                    res1 = objParser.parse (prg);
                     window.MAL.test.run.results[i] =
                     {
-                        title:          t.title,
-                        prg:            p,
-                        exp:            t.expectedResult,
-                        expFail:        t.expectToFail,
-                        result:         r,
+                        title:          test.title,
+                        prg:            prg,
+                        exp:            res0,
+                        expFail:        test.expectToFail,
+                        result:         res1,
                         hasFailed:      false
                     }
                 }
@@ -199,10 +133,10 @@ window.MAL.test.run.program = function ()
                 {
                     window.MAL.test.run.results[i] =
                     {
-                        title:          t.title,
-                        prg:            p,
-                        exp:            t.expectedResult,
-                        expFail:        t.expectToFail,
+                        title:          test.title,
+                        prg:            prg,
+                        exp:            res0,
+                        expFail:        test.expectToFail,
                         result:         null,
                         hasFailed:      true
                     }
@@ -238,55 +172,6 @@ window.MAL.test.run.program = function ()
         }
     };
     
-    /**
-     * Save current test corpus. This will save a verbatim copy of the content of 
-     * the editing area in the browser's localStorage - provided that the content 
-     * has changed since last save and that it is valid JSON data.
-     */
-    var SaveCorpus = function ()
-    {
-        var srcNew;
-        var objRec;
-        
-        /* Retrieve source code from editing area. */
-        srcNew  = txtCurrentTestCorpus.value;
-        
-        /* Save source code (We will save source code if it is different from current test corpus). */
-        if (srcNew !== srcTests)
-        {   
-            /* We save source code if it is valid JSON data. */
-            try
-            {
-                /* Create JS Object from source code. */
-                objRec = JSON.parse (srcTests);
-                
-                /* We survived JSON parsing - i.e. test cases are valid JSON. 
-                 * Now we can commit source code as new (current) test corpus.
-                 */
-                srcTests = srcNew;
-                objTests = objRec;
-                localStorage.setItem ("mal.testcases", srcTests);
-                
-                /* Report success in the report bar above the edit area - message will auto clear after 1s. */
-                PrintReport ("Test cases saved", false, 1000);
-            }
-            catch (e)
-            {
-                /* JSON parsing failed, i.e. source code is not valid JSON data. 
-                 * We report failure in the report bar - message will show persistently 
-                 * until next save attempt.
-                 */
-                PrintReport ("Faulty JSON data. (Auto) save aborted. Details: " + e.message, true, 0);
-            }
-        }
-        else
-        {
-            /* No changes in editing area detected. */
-            PrintReport ("Nothing to save", false, 1000);
-        }
-        btnSaveTests.disabled = true;
-    }
-    
     onLoadPage ();
 };
 
@@ -295,6 +180,8 @@ window.MAL.test.run.program ();
 /*
 
     ----------------------------------------
-    [100]:  We won't load the default corpus automatically, because we want the user to see the problem.
+    [100]:  Assumption: If test.expectedResult is a function we trust the hosting Javascript engine
+            to compute the result correctly. In effect, the MAL parser test will follow the quality 
+            of the hosting Javascript engine.
     
  */

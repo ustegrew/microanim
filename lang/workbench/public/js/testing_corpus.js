@@ -12,7 +12,7 @@ if (typeof window.MAL == "undefined")
     };
 }
 
-window.MAL.test.defaultCorpus =
+window.MAL.test.corpus =
 [
     /* Assignment: Decimal integer / unary negation */
     {"title": "a=0",            "program": "a=0",           "expectedResult": {"a":0},      "expectToFail": false},
@@ -88,6 +88,10 @@ window.MAL.test.defaultCorpus =
     {"title": "a=-0b111",       "program": "a=-0b111",      "expectedResult": {"a":-7},     "expectToFail": false},
 
     /* Assignment: Invalid integer numbers */
+    {"title": "a=2a",           "program": "a=2a",          "expectedResult": null,         "expectToFail": true},
+    {"title": "a=a2",           "program": "a=a2",          "expectedResult": null,         "expectToFail": true},
+    {"title": "a=2 1",          "program": "a=2 1",         "expectedResult": null,         "expectToFail": true},
+    {"title": "a=2x1",          "program": "a=2x1",         "expectedResult": null,         "expectToFail": true},
     
     /* Assignment: Floating point numbers */
     

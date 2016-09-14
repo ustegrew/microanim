@@ -8,74 +8,92 @@
 <h2>Test cases</h2>
 <div id="txtReport" style="border:1px solid silver; background:#eeeeee; border-radius:3px; width: 785px; height: 1.5em; margin-bottom: 1em; padding-left:1em;"></div>
 <div style="text-align: right; margin-bottom:5px; padding-bottom:5px;">
-    <button id="btnSaveTests" style="width:7em;">Save</button>
-    <span style="width: 2em;">&nbsp;</span>
     <button id="btnRunAll" style="width:7em;">Run all</button>
 </div>
 <div>
-    <textarea id="txtCurrentTestCorpus" spellcheck="false" placeholder="Test corpus here..." style="min-height:10em; max-width:795px; width:795px;"></textarea>
+    <textarea id="txtTestCorpus" readonly="true" spellcheck="false" placeholder="Test corpus here..." style="min-height:50em; max-width:795px; width:795px;"></textarea>
 </div>
-<h3>Re: Test cases...</h3>
+<h3>For testbench developers</h3>
 <ul>
-    <li>Test cases will be stored in the browser's localStorage. If the test case area is empty, copy and paste the default set 
-    <a href="#defTCase">below</a>, then click Save.</li>
-    <li>All test cases must be written in valid JSON format. Note: All keys must be enclosed in quotes!</li>
-    <li>The whole test case corpus is written as a single array, with each element being one test case.</li>
+    <li>
+        Test cases are stored in the file <code>/public/js/testing_corpus.js</code>. To change the tests, edit
+        that file and recommit to the git repo.
+    </li>
+    <li>
+        All test cases must be written in valid JSON format. Note: All keys must be enclosed in quotes!
+    </li>
+    <li>
+        The whole test case corpus is written as a single array, with each element being one test case.
+    </li>
     <li>
         <div>Each test case must be written as a valid JSON descriptor. Format of descriptor:</div>
 <pre>{
     "title":                {String},
     "program":              {String}
-    "expectedResult":       {Object} | {primitive}
+    "expectedResult":       {Function} | {Object} | {primitive}
     "expectToFail:          {boolean}
 }</pre>
         <div>
             Elements denote:
             <dl>
                 <dt><code>title</code></dt>
-                    <dd>Descriptive title, will appear next to the test result in the <a href="#tResult">test result list</a>.</dd>
+                    <dd>
+                        Descriptive title, will appear next to the test result in the <a href="#tResult">test result list</a>.
+                    </dd>
             </dl>
             <dl>
                 <dt><code>program</code></dt>
-                    <dd>The MAL program we are testing the parser with.</dd>
+                    <dd>
+                        The MAL program we are testing the parser with.
+                    </dd>
             </dl>
             <dl>
                 <dt><code>expectedResult</code></dt>
-                    <dd>The expected result. Will be ignored if <code>expectToFail</code> is <code>true</code>.</dd>
+                    <dd>
+                        The expected result. What we do with it depends on <code>expectToFail</code> and 
+                        on the type of <code>expectedResult</code>.
+                        <ul>
+                            <li>
+                                If <code>expectToFail</code> is <code>true</code>: We will ignore <code>expectedResult</code>.
+                            </li>
+                            <li>
+                                If <code>expectToFail</code> is <code>false</code> and <code>expectedResult</code>
+                                is of type <code>function</code>: Test runner will execute the function. Function 
+                                must return a value. The test runner will deep compare that value with the value
+                                returned by the parser. If they both match, the test has passed.
+                            </li>
+                            <li>
+                                If <code>expectToFail</code> is <code>false</code> and <code>expectedResult</code>
+                                is <b>not</b> of type <code>function</code>: Test runner will deep compare <code>expectedResult</code>
+                                with the value returned by the parser. If they both match, the test has passed.
+                            </li>
+                        </ul>
+                    </dd>
             </dl>
             <dl>
                 <dt><code>expectToFail</code></dt>
-                    <dd>If <code>true</code> we expect the parsing step to fail ( e.g. <code>prg</code> has deliberate
-                    syntax error(s) ), if <code>false</code> we expect the parsing step to be successfull and 
-                    return <code>expectedResult</code>.</dd>
+                    <dd>
+                        <ul>
+                            <li>
+                                If <code>true</code>: We expect the parsing step to fail ( e.g. <code>test.program</code> has deliberate
+                                syntax error(s) ).
+                            </li>
+                            <li>
+                                If <code>false</code>: We expect the parsing step to be successfull and 
+                                the parser to return <code>expectedResult</code>.
+                            </li>
+                        </ul>
+                    </dd>
             </dl>
         </div>
     </li>
 </ul>
 
-<!-- 
-    Default test corpus - e.g. useful when this page is loaded for the first time in a particular browser 
-    and particular machine. Developers of this test bench are responsible to keep this default corpus up to date
-    by editing the JSON code inside the textarea tag below. Bit crude... but it works, and it's not worth
-    the time and effort to make it better.
--->
-<a name="defTCase"></a>
-<h2>Default test corpus</h2>
-<div>
-    ... If the text box in the <a href="#divEdit">editing area</a> is empty (or corrupted). 
-    Copy and paste content below into the <a href="#divEdit">editing area</a>, then click "Save".
-</div>
-<div style="font-size:0.75em; font-style:italic;">
-    Testbench developers: Please keep the default test corpus up to date, by editing the 
-    file '/public/js/testing_defaultCorpus.js' and re-committing to the SCM repo.
-</div>
-<textarea id="txtDefaultTestCorpus" spellcheck="false" placeholder="Default test corpus here..." style="min-height:10em; max-width:795px; width:795px;"></textarea>
-
 <!-- Scripting: QUnit framework -->
 <script src="/vendor/qunit/qunit-2.0.1.js"></script>
 
-<!-- Scripting: Default test corpus -->
-<script src="/js/testing_defaultCorpus.js"></script>
+<!-- Scripting: Test corpus -->
+<script src="/js/testing_corpus.js"></script>
 
-<!-- Scripting: Test runner. You must include the default test corpus before including this file -->
+<!-- Scripting: Test runner. You must include the test corpus before including this file -->
 <script src="/js/testing.js"></script>
