@@ -49,9 +49,6 @@ window.MAL.test.run.program = function ()
         /* Event handlers for various GUI elements. */
         btnRunAll.onclick = RunTests;
         
-        /* Report successfull loading. */
-        PrintReport ("Page loaded", false, 5000);
-        
         /* Run tests. */
         RunTests ();
     };
@@ -97,7 +94,10 @@ window.MAL.test.run.program = function ()
         var res1;
         var test;
         var src;
-                        
+
+        /* Report successfull loading. */
+        PrintReport ("Running tests...", false, 0);
+        
         nTests = objTests.length;
         if (nTests >= 1)
         {
@@ -173,6 +173,8 @@ window.MAL.test.run.program = function ()
                 QUnit.test (t.title, window.MAL.test.run.callbacks[i]);
             }
         }
+        
+        PrintReport ("Tests finished", false, 0);
     };
     
     onLoadPage ();

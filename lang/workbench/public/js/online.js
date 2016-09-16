@@ -13,6 +13,7 @@ function main ()
   var oldGrammar        = null;
   var oldParserVar      = null;
   var oldOptionCache    = null;
+  var oldOptionTrace    = null;
   var oldOptionOptimize = null;
   var oldInput          = null;
 
@@ -40,6 +41,7 @@ function main ()
   function build() {
     oldGrammar        = getGrammar();
     oldParserVar      = $("#parser-var").val();
+    oldOptionTrace    = $("#option-trace").is(":checked");
     oldOptionCache    = $("#option-cache").is(":checked");
     oldOptionOptimize = $("#option-optimize").val();
 
@@ -48,6 +50,7 @@ function main ()
     $("#parse-message").attr("class", "message disabled").text("Parser not available.");
     $("#output").addClass("disabled").text("Output not available.");
     $("#parser-var").attr("disabled", "disabled");
+    $("#option-trace").attr("disabled", "disabled");
     $("#option-cache").attr("disabled", "disabled");
     $("#option-optimize").attr("disabled", "disabled");
     $("#parser-download").attr("disabled", "disabled");
@@ -76,6 +79,7 @@ function main ()
       $("#input").removeAttr("disabled");
       $("#parser-source").val($("#parser-var").val() + " = " + parserSource + ";\n");
       $("#parser-var").removeAttr("disabled");
+      $("#option-trace").removeAttr("disabled");
       $("#option-cache").removeAttr("disabled");
       $("#option-optimize").removeAttr("disabled");
       $("#parser-download").removeAttr("disabled");
@@ -92,7 +96,7 @@ function main ()
   }
 
   function parse() {
-    oldInput = $("#input").val();
+    oldInput          = $("#input").val();
 
     $("#input").removeAttr("disabled");
     $("#parse-message").attr("class", "message progress").text("Parsing the input...");
@@ -155,7 +159,10 @@ function main ()
   }
 
   function scheduleParse() {
-    if ($("#input").val() === oldInput) { return; }
+    var nothingChanged = 
+         $("#input").val() === oldInput;
+    if (nothingChanged) { return; }
+    
     if (buildAndParseTimer !== null) { return; }
 
     if (parseTimer !== null) {

@@ -24,6 +24,7 @@
 {
     var gStorage = {};
     var gSteps   = [];
+    var gErrCode = 0;
 
     /**
      * Asserts that variable <code>id</code> has (not) been declared. If assertion fails,
@@ -40,34 +41,79 @@
         
         var isErr;
         var msg;
+        var v;
         
+        v = gStorage [id];
         if (doInverse)
         {
-            isErr = (typeof id  != kUndef);
+            isErr = (typeof v  != kUndef);
         }
         else
         {
-            isErr = (typeof id == kUndef);
+            isErr = (typeof v == kUndef);
         }
         
         if (isErr)
         {
-            msg  = doInverse  ?  "Already declared"  :  "Undeclared";
+            msg  = doInverse  ?  "Symbol already declared"  :  "Undeclared symbol";
             msg += ": '" + id + "'";
-            throw (msg);
+            error (msg);
         }
+    }
+
+    function _Dbg_PushDump (msg)
+    {
+        var dmp;
+        
+        dmp = JSON.stringify (_GetDump (), null, 4);
+        console.log (msg); // TODO Push debug dumps to the application using
+        console.log (dmp); //      this parser, not just to the console.
+    }
+    
+    function _GetDump ()
+    {
+        var ret;
+        
+        ret =
+        {
+            scope:  gStorage,
+            stack:  []
+        };
+
+        return ret;
     }
 }
 
-/* ----------------- A.. Program ----------------------  */
+start
+    = Program
+    {
+        return _GetDump ();
+    }
+
+
+/* --------------------- A.. Program ----------------------  */
 
 Program
-    = Declaration* Expression*
+    = (
+            Declaration
+      )* 
+      (
+            DebugPushStatement
+          / Expression
+      )*
+
+/* ----------------- A.. Debug support --------------------  */
+
+DebugPushStatement "Dbg_PushDump"
+    = Tok_DbgPushDump _ msg:L_String EOL
+    {
+        _Dbg_PushDump (msg);
+    }
 
 /* ----------------- A.. Declaration ----------------------  */
 
 Declaration
-    = __ Tok_Declare __ id:Identifier __ EOL
+    = _ Tok_Declare _ id:Identifier _EOL
     {
         _AssertDeclared (id, true);
         gStorage[id] = null;
@@ -78,17 +124,17 @@ Declaration
 
 /* Expressions */ 
 Expression
-    = __ lh_assignee:Variable_LH __ "=" __ rh_term:Term_Tree __ EOL
+    = _ lh_assignee:Variable_LH _ "=" _ rh_term:Term_Tree _EOL
     {
+        _AssertDeclared (lh_assignee, false);
         gStorage [lh_assignee] = rh_term;
-        return gStorage;
     }
 
 Term_Tree
     = Term_Numeric_Additive
 
 Term_Numeric_Additive
-    = head:Term_Numeric_Multiplicative tail:(__ (Op_Add / Op_Subtract) __ Term_Numeric_Multiplicative)*
+    = head:Term_Numeric_Multiplicative tail:(_ (Op_Add / Op_Subtract) _ Term_Numeric_Multiplicative)*
     {
         var i;
         var nTail;
@@ -119,7 +165,7 @@ Term_Numeric_Additive
     }
 
 Term_Numeric_Multiplicative
-    = head:Term_Numeric_Power tail:(__ (Op_Multiply / Op_Divide) __ Term_Numeric_Power)*
+    = head:Term_Numeric_Power tail:(_ (Op_Multiply / Op_Divide) _ Term_Numeric_Power)*
     {
         var i;
         var nTail;
@@ -150,7 +196,7 @@ Term_Numeric_Multiplicative
     }
 
 Term_Numeric_Power
-    =  base:Term_Numeric_Exp tail:(__ "**" __ Term_Numeric_Exp)*
+    =  base:Term_Numeric_Exp tail:(_ "**" _ Term_Numeric_Exp)*
     {
         var i;
         var nTail;
@@ -190,7 +236,7 @@ Term_Numeric_Exp
     }
 
 Term_Numeric_Bracketed
-    = "(" __ value:Term_Numeric_Additive __ ")"
+    = "(" _ value:Term_Numeric_Additive _ ")"
     {
         var ret;
         
@@ -200,7 +246,7 @@ Term_Numeric_Bracketed
     }
 
 Term_Numeric_Unary_Neg
-    = Op_UnaryNegative __ value:(Term_Numeric_Bracketed / Variable_RH / L_Number)
+    = Op_UnaryNegative _ value:(Term_Numeric_Bracketed / Variable_RH / L_Number)
     {
         var ret;
 
@@ -224,8 +270,8 @@ Variable_RH
         return gStorage[id];
     }
     
-Identifier
-  = head:[a-zA-Z_] tail:[a-zA-Z0-9_]*
+Identifier "identifier"
+  = !Keyword head:[a-zA-Z_] tail:[a-zA-Z0-9_]*
   {
       var ret;
 
@@ -253,15 +299,14 @@ SingleLineComment
 /* Keywords */
 
 Keyword
-    = Tok_Declare
+    = Tok_DbgPushDump
+    / Tok_Declare
     / Tok_Else
     / Tok_For
     / Tok_Function
     / Tok_If
     / Tok_While
-    / Tok_GetScope
     / Tok_GetSize
-    / Tok_GetStack
     / Tok_LoadImg
     / Tok_MoveBy
     / Tok_MoveTo
@@ -270,6 +315,7 @@ Keyword
     / Tok_PushFirst
     / Tok_PushLast
     / Tok_Reset
+    / Tok_Return
     / Tok_RotateBy
     / Tok_RotateTo
     / Tok_SetTransparency
@@ -284,14 +330,13 @@ Tok_Else            = "else"
 Tok_For             = "for"
 Tok_Function        = "function"
 Tok_If              = "if"
+Tok_Return          = "return"
 Tok_While           = "while"
 
 
 /* Functions */
 
-Tok_GetScope        = "GetScope"
 Tok_GetSize         = "GetSize"
-Tok_GetStack        = "GetStack"
 Tok_LoadImg         = "LoadImg"
 Tok_MoveBy          = "MoveBy"
 Tok_MoveTo          = "MoveTo"
@@ -307,12 +352,17 @@ Tok_StepBack        = "StepBack"
 Tok_StepForward     = "StepForward"
 
 
+/* Debug support */
+
+Tok_DbgPushDump     = "Dbg_PushDump"
+
+
 /* Generic */
 
 SourceCharacter
     = .
 
-WhiteSpace "whitespace"
+WhiteSpace "whitespace-char"
     = "\t"
     / "\v"
     / "\f"
@@ -321,28 +371,37 @@ WhiteSpace "whitespace"
     / "\uFEFF"
     / Zs
 
-EOL
+EOL "end-of-line"
     = [\n\r\u2028\u2029]
+
+_EOL "whitespace_then_eol"
+    = WhiteSpace* EOL
+
+_ "whitespace"
+    = WhiteSpace*
     
-__
-  = (WhiteSpace / EOL)*
-  
-EscNl
+__ "whitespace_or_eol"
+    = (WhiteSpace / EOL)*
+    
+_EOL "whitespace_then_eol"
+    = WhiteSpace* EOL
+
+EscNl "EscEOL"
     = "\\n"
 
-EscDQuot
+EscDQuot "EscDblQuot"
     = "\\\""
   
-EscBackslash
+EscBackslash "EscBackslash"
     = "\\\\"
 
 
 /* Literals */
 
 L_Number
-    = n:L_Hex     {Trace ("L_Number::L_Hex"); return n;}
-    / n:L_Bin     {Trace ("L_Number::L_Bin"); return n;}
-    / n:L_Decimal {Trace ("L_Number::L_Decimal"); return n;}
+    = n:L_Hex
+    / n:L_Bin
+    / n:L_Decimal
     
 
 L_Scalar
@@ -354,7 +413,7 @@ L_Scalar
     / L_Null
 
 L_Array
-    = "[" head:L_Scalar tail:(__ "," __ L_Scalar __)* "]"
+    = "[" head:L_Scalar tail:(_ "," _ L_Scalar _)* "]"
     {
     }
 
@@ -386,7 +445,6 @@ L_Hex
         var vx;
         var ret;
         
-        Trace ("L_Hex");
         vx  = l0.join ("");
         ret = parseInt (vx, 16);
 
@@ -406,9 +464,13 @@ L_Bin
     }
 
 L_String
-    = literal:('"' SourceCharacter* '"')
+    = ["] l0:(Ll / Lu / Nd / Pc / Zs)* ["]
     {
-        return literal;
+        var ret;
+        
+        ret = l0.join ("");
+        
+        return ret;
     }
 
 L_Boolean
