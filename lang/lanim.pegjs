@@ -11,7 +11,7 @@
  * more difficult to design.
  *
  * Version:
- *     PH, 2016-09-13 10-57-58
+ *     PH, 2016-09-18 19-40
  * 
  * --------
  *
@@ -61,6 +61,11 @@
         }
     }
 
+    /**
+     * Pushes a dump of the internal state to the client using this interpreter.
+     * 
+     * @param (string) msg      An explanatory comment (EXPERIMENTAL).
+     */
     function _Dbg_PushDump (msg)
     {
         var dmp;
@@ -70,14 +75,49 @@
         console.log (dmp); //      this parser, not just to the console.
     }
     
+    /**
+     * Returns a dump of the internal state of the MAL interpreter as a JS object. 
+     * The object has the following layout:
+     * 
+     * {
+     *     state:          (Map <string, Object>) Hash map containing all variables in the current scope.
+     *     stack:          (Array <string>)       Current content of the call stack. The last element is the
+     *                                            function call that lead to the current position.
+     *     location:       (Object)               Current location of the interpreter execution in the user program.
+     * };
+     * 
+     * 
+     * Details:
+     * 
+     *     state
+     *         Each variable represented as key/value pair. Key: Variable name, Value: Variable content.
+     *     stack
+     *         Each element a string containing the verbatim function call.
+     *     location
+     *         Two elements, describing a range in the source code. Elements denote range's start 
+     *         and end position, respectively.
+     *             {
+     *                 start:      {column: c0, line: l0, offset: x0},
+     *                 end:        {column: c1, line: l1, offset: x1}
+     *             }
+     *         where:
+     *             l0, l1: Lines in source code
+     *             x0, x1: Resp. offsets from source code start.
+     *             c0, c1: Pointer positions in source code lines.
+     */
     function _GetDump ()
     {
         var ret;
         
         ret =
         {
-            scope:  gStorage,
-            stack:  []
+            state:          gStorage,
+            stack:          [],
+            location:
+            {
+                start:      {offset: 0, line: 0, column: 0},
+                end:        {offset: 0, line: 0, column: 0}
+            }
         };
 
         return ret;
