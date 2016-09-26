@@ -11,7 +11,7 @@
  * more difficult to design.
  *
  * Version:
- *     PH, 2016-09-18 19-40
+ *     PH, 2016-09-26 19-31-06
  * 
  * --------
  *
@@ -101,9 +101,9 @@
      *                 end:        {column: c1, line: l1, offset: x1}
      *             }
      *         where:
-     *             l0, l1: Lines   [start, end] in source code.                 One based index.
-     *             c0, c1: Columns [start, end] in source code lines.           One based index.
-     *             x0, x1: Offsets [start, end] from source code beginning.     Zero based index.
+     *             l0, l1: Lines in source code
+     *             x0, x1: Resp. offsets from source code start.
+     *             c0, c1: Pointer positions in source code lines.
      */
     function _GetDump ()
     {
@@ -234,21 +234,24 @@ Term_Numeric_Multiplicative
         return ret;
     }
 
+/**
+ * [100]
+ */
 Term_Numeric_Power
-    =  base:Term_Numeric_Exp tail:(_ "**" _ Term_Numeric_Exp)*
+    =  head:Term_Numeric_Exp tail:( _ "**" _ Term_Numeric_Power)?
     {
         var i;
         var nTail;
         var exp;
         var ret;
 
-        ret   = base;
-        nTail = tail.length;
-        if (nTail >= 1)
+        ret = head;
+        if (tail !== null)
         {
-            for (i = 0; i < nTail; i++)
+            nTail = tail.length;
+            if (nTail >= 1)
             {
-                exp = tail [i][3];
+                exp = tail [3];
                 ret = Math.pow (ret, exp);
             }
         }
@@ -262,6 +265,10 @@ Term_Numeric_Exp
         return value;
     }
     / value:Term_Numeric_Unary_Neg
+    {
+        return value;
+    }
+    / value:L_Number_Constant
     {
         return value;
     }
@@ -438,9 +445,9 @@ EscBackslash "EscBackslash"
 /* Literals */
 
 L_Number
-    = n:L_Hex
-    / n:L_Bin
-    / n:L_Decimal
+    = L_Hex
+    / L_Bin
+    / L_Decimal
     
 
 L_Scalar
@@ -450,6 +457,7 @@ L_Scalar
     / L_String
     / L_Boolean
     / L_Null
+    / L_Number_Constant
 
 L_Array
     = "[" head:L_Scalar tail:(_ "," _ L_Scalar _)* "]"
@@ -528,6 +536,16 @@ L_Null
         return null;
     }
 
+L_Number_Constant
+    = n:"_e"
+    {
+        return Math.E;
+    }
+    / n:"_pi"
+    {
+        return Math.PI;
+    }
+      
 
 /* Operators */
 
@@ -667,3 +685,10 @@ Pc = [\u005F\u203F-\u2040\u2054\uFE33-\uFE34\uFE4D-\uFE4F\uFF3F]
 // Separator, Space
 Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
+
+/**
+ * ------------------------
+ * [100]: Multi exponentiation is right recursive! Consider:
+ * 
+ *        2 ** 3 ** 4  =  2 ** (3 ** 4) = 2 ** 81, not 8 **4 (4096)
+ */
