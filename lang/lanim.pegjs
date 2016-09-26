@@ -101,23 +101,22 @@
      *                 end:        {column: c1, line: l1, offset: x1}
      *             }
      *         where:
-     *             l0, l1: Lines in source code
-     *             x0, x1: Resp. offsets from source code start.
-     *             c0, c1: Pointer positions in source code lines.
+     *             l0, l1: Lines   [start, end] in source code.                 One based index.
+     *             c0, c1: Columns [start, end] in source code lines.           One based index.
+     *             x0, x1: Offsets [start, end] from source code beginning.     Zero based index.
      */
     function _GetDump ()
     {
+        var loc;
         var ret;
+        
+        loc = location ();
         
         ret =
         {
             state:          gStorage,
             stack:          [],
-            location:
-            {
-                start:      {offset: 0, line: 0, column: 0},
-                end:        {offset: 0, line: 0, column: 0}
-            }
+            location:       loc
         };
 
         return ret;
