@@ -6,16 +6,19 @@ if (typeof window.MAL == "undefined")
 window.MAL.test.currentCorpus = [];
 window.MAL.test.run = 
 {
-    results:    [],
-    callbacks:  [],
-    program:    null
+    nTestsPerBatch:     500,
+    iBatch:             0,
+    i:                  0,
+    results:            [],
+    callbacks:          [],
+    program:            null
 }
+
 window.MAL.test.run.program = function ()
 {
     /* GUI elements */
     var btnRunAll                   = document.getElementById ("btnRunAll");
     var txtReport                   = document.getElementById ("txtReport");
-    var txtTestCorpus               = document.getElementById ("txtTestCorpus");
     
     var objParser;      /* Parser as created from the work bench            */
     var objTests;       /* Current test corpus (As JS objects)              */
@@ -30,6 +33,10 @@ window.MAL.test.run.program = function ()
         var styleElement;
         var parserSource;
         
+        /* Event handlers for various GUI elements. */
+        btnRunAll.onclick   = RunTests;
+        btnRunAll.disabled  = true;
+        
         /* Load QUnit style sheet. */
         styleElement                = window.document.createElement ("link");
         styleElement.rel            = "stylesheet";
@@ -42,12 +49,6 @@ window.MAL.test.run.program = function ()
         parserSource = localStorage.getItem ("mal.parserSource");
         objParser    = eval (parserSource);
         objTests     = window.MAL.test.corpus;
-        
-        /* Write default test corpus into resp. text box. [110] */
-        txtTestCorpus.value  = JSON.stringify (window.MAL.test.corpus, null, 4);
-        
-        /* Event handlers for various GUI elements. */
-        btnRunAll.onclick = RunTests;
         
         /* Run tests. */
         RunTests ();
@@ -82,10 +83,7 @@ window.MAL.test.run.program = function ()
         }
     }
 
-    /**
-     * Run the current test corpus.
-     */
-    var RunTests = function ()
+    var RunCreateTestObjects = function ()
     {
         var i;
         var nTests;
@@ -95,9 +93,6 @@ window.MAL.test.run.program = function ()
         var test;
         var src;
 
-        /* Report successfull loading. */
-        PrintReport ("Running tests...", false, 0);
-        
         nTests = objTests.length;
         if (nTests >= 1)
         {
@@ -137,7 +132,7 @@ window.MAL.test.run.program = function ()
                         prg:            prg,
                         exp:            res0,
                         expFail:        test.expectToFail,
-                        result:         null,
+                        result:         e.message,
                         hasFailed:      true
                     }
                 }
@@ -149,32 +144,82 @@ window.MAL.test.run.program = function ()
                  *       as that one is within the function's lexical scope when the tests are performed.
                  *       With the result that all but the last test result will be wrong.
                  */
-                 src =
+                src =
                     "var r = window.MAL.test.run.results [" + i + "];"                                                      + "\n" +
+                    "var msg;"                                                                                              + "\n" +
                     "if (r.expFail)"                                                                                        + "\n" +
                     "{"                                                                                                     + "\n" +
-                    "    assert.ok            (r.hasFailed, \"Did parsing FAIL as expected [flag must be TRUE]?\")"         + "\n" +
+                    "    msg = r.hasFailed  ?  'EXPECTED: Parsing FAILED.' : "                                              + "\n" +
+                    "                          'UNEXPECTED: Parsing SUCCEEDED';"                                            + "\n" +
+                    "    assert.ok (r.hasFailed, msg);"                                                                     + "\n" +
                     "}"                                                                                                     + "\n" +
                     "else"                                                                                                  + "\n" +
                     "{"                                                                                                     + "\n" +
-                    "    assert.notOk         (r.hasFailed, \"Did parsing SUCCEED as expected [flag must be FALSE]?\");"    + "\n" +
+                    "    msg = r.hasFailed  ?  'UNEXPECTED: Parsing FAILED. Details: ' + r.result :"                        + "\n" +
+                    "                          'EXPECTED: Parsing SUCCEEDED';"                                              + "\n" +
+                    "    assert.notOk (r.hasFailed, msg);"                                                                  + "\n" +
                     "    if (! r.hasFailed)"                                                                                + "\n" +
                     "    {"                                                                                                 + "\n" +
-                    "        assert.deepEqual (r.result.state, r.exp, \"Did the parser return the expected value?\");"      + "\n" +
+                    "        assert.deepEqual (r.result.state, r.exp, \"Parser returned expected state?\");"                + "\n" +
                     "    }"                                                                                                 + "\n" +
                     "}"
                 window.MAL.test.run.callbacks[i] = new Function ("assert", src);
             }
             
-            /* Run tests */
-            for (i = 0; i < nTests; i++)
-            {
-                t = objTests [i];
-                QUnit.test (t.title, window.MAL.test.run.callbacks[i]);
-            }
+            PrintReport ("Starting test run...", false, 0);
+            window.setTimeout (RunBatch, 500);
         }
+    };
+    
+    /**
+     * Runs a batch of 500 test cases, then schedules the next batch 500 ms later. 
+     * This gives the web browser time to update the UI, so we don't have a frozen web page. 
+     * After the batch run we report eh progress on the UI.
+     */
+    var RunBatch = function ()
+    {
+        var r               = window.MAL.test.run;
+        var nTestsBatch     = r.nTestsPerBatch
+        var nTestsTot       = objTests.length;
+        var t               = null;
         
-        PrintReport ("Tests finished", false, 0);
+        while 
+        (
+            (r.iBatch < nTestsBatch) &&
+            (r.i      < nTestsTot)
+        )
+        {
+            t   = objTests [r.i];
+            if (typeof (t.module) != "undefined")
+            {
+                QUnit.module (t.module);
+            }
+            QUnit.test (t.title, window.MAL.test.run.callbacks[r.i]);
+            r.iBatch++;
+            r.i++;
+        }
+
+        if (r.i < nTestsTot)
+        {
+            r.iBatch = 0;
+            window.setTimeout (RunBatch, 500);
+            PrintReport ("Done test case #" + (r.i) + " (" + nTestsTot + ").", false, 0);
+        }
+        else
+        {
+            PrintReport ("All tests finished. Results <a href='#tResult'>below</a>", false, 0);
+            btnRunAll.disabled = false;
+        }
+    };
+    
+    /**
+     * Run the current test corpus.
+     */
+    var RunTests = function ()
+    {
+        /* Create test objects. */
+        PrintReport ("One moment please... Creating test objects...", false, 0);
+        window.setTimeout (RunCreateTestObjects, 500);
     };
     
     onLoadPage ();

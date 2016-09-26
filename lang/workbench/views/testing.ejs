@@ -1,22 +1,23 @@
-<!-- Test report area - driven by QUnit framework -->
-<a name="tResult"></a>
-<div id="qunit"></div>
-<div id="qunit-fixture"></div>
-
 <!-- Test case editing area -->
 <a name="divEdit"></a>
 <h2>Test cases</h2>
 <div id="txtReport" style="border:1px solid silver; background:#eeeeee; border-radius:3px; width: 785px; height: 1.5em; margin-bottom: 1em; padding-left:1em;"></div>
 <div style="text-align: right; margin-bottom:5px; padding-bottom:5px;">
-    <button id="btnRunAll" style="width:7em;">Run all</button>
+    <button id="btnRunAll" style="width:7em;">Run again</button>
 </div>
-<div>
-    <textarea id="txtTestCorpus" readonly="true" spellcheck="false" placeholder="Test corpus here..." style="min-height:50em; max-width:795px; width:795px;"></textarea>
-</div>
+<div style="border:1px solid silver; background:#eeeeee; border-radius:3px; width: 785px; height: 1.5em; margin-bottom: 1em; padding-left:1em;">Test case details: See <a href="#devNotes">Notes</a></div>
+
+<!-- Test report area - driven by QUnit framework -->
+<a name="tResult"></a>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<!-- Developer notes -->
+<a name="devNotes"></a>
 <h3>For testbench developers</h3>
 <ul>
     <li>
-        Test cases are stored in the file <code>/public/js/testing_corpus.js</code>. To change the tests, edit
+        Test corpus (i.e. the test cases) are stored in the file <code>/public/js/testing_corpus.js</code>. To change the tests, edit
         that file and recommit to the git repo.
     </li>
     <li>
@@ -28,6 +29,7 @@
     <li>
         <div>Each test case must be written as a valid JSON descriptor. Format of descriptor:</div>
 <pre>{
+    "module":               {String} <i>(optional)</i>
     "title":                {String},
     "program":              {String}
     "expectedResult":       {Function} | {Object} | {primitive}
@@ -36,18 +38,19 @@
         <div>
             Elements denote:
             <dl>
+                <dt><code>module</code></dt>
+                    <dd>
+                        Setting this field, will create a new test sub section. All subsequent test cases with no <code>module</code>
+                        field will automatically be assigned to the new sub section.
+                    </dd>
                 <dt><code>title</code></dt>
                     <dd>
                         Descriptive title, will appear next to the test result in the <a href="#tResult">test result list</a>.
                     </dd>
-            </dl>
-            <dl>
                 <dt><code>program</code></dt>
                     <dd>
                         The MAL program we are testing the parser with.
                     </dd>
-            </dl>
-            <dl>
                 <dt><code>expectedResult</code></dt>
                     <dd>
                         The expected result. What we do with it depends on <code>expectToFail</code> and 
@@ -69,8 +72,6 @@
                             </li>
                         </ul>
                     </dd>
-            </dl>
-            <dl>
                 <dt><code>expectToFail</code></dt>
                     <dd>
                         <ul>
