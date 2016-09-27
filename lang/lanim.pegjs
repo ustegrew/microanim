@@ -11,7 +11,7 @@
  * more difficult to design.
  *
  * Version:
- *     PH, 2016-09-26 19-31-06
+ *     PH, Tuesday-2016-09-27 18-50-47
  * 
  * --------
  *
@@ -26,7 +26,7 @@
     var gSteps   = [];
     var gErrCode = 0;
 
-    /**
+    /** 
      * Asserts that variable <code>id</code> has (not) been declared. If assertion fails,
      * throw an exception.
      * 
@@ -238,7 +238,7 @@ Term_Numeric_Multiplicative
  * [100]
  */
 Term_Numeric_Power
-    =  head:Term_Numeric_Exp tail:( _ "**" _ Term_Numeric_Power)?
+    =  head:Term_Numeric_Exp_Signed tail:( _ Op_PowerTo _ Term_Numeric_Power)?
     {
         var i;
         var nTail;
@@ -259,12 +259,29 @@ Term_Numeric_Power
         return ret;
     }
 
+Term_Numeric_Exp_Signed
+    = sign:(Op_UnaryPositive / Op_UnaryNegative)? _ value:Term_Numeric_Exp
+    {
+        var ret;
+
+        ret = parseFloat (value);
+        if (sign !== null)
+        {
+            if (sign === "-")
+            {
+                ret = -ret;
+            }   
+        }
+        
+        return ret;
+    }
+    
 Term_Numeric_Exp
-    = value:Term_Numeric_Bracketed        
+    = value:Term_Numeric_Math
     {
         return value;
     }
-    / value:Term_Numeric_Unary_Neg
+    / value:Term_Numeric_Bracketed
     {
         return value;
     }
@@ -281,23 +298,53 @@ Term_Numeric_Exp
         return value;
     }
 
+Term_Numeric_Math
+    = func:Tok_Math _ "(" value:Term_Numeric_Additive ")"
+    {
+        var ret;
+        
+        if (func == "abs")
+        {
+            ret = Math.abs (value);
+        }
+        else if (func == "sqrt")
+        {
+            ret = Math.sqrt (value);
+        }
+        else if (func == "log")
+        {
+            ret = Math.log (value);
+        }
+        else if (func == "exp")
+        {
+            ret = Math.exp (value);
+        }
+        else if (func == "sin")
+        {
+            ret = Math.sin (value);
+        }
+        else if (func == "cos")
+        {
+            ret = Math.cos (value);
+        }
+        else if (func == "tan")
+        {
+            ret = Math.tan (value);
+        }
+        else
+        {
+            error ("Unknown math function: " + func);
+        }
+        
+        return ret;
+    }
+
 Term_Numeric_Bracketed
     = "(" _ value:Term_Numeric_Additive _ ")"
     {
         var ret;
         
         ret = value;
-        
-        return ret;
-    }
-
-Term_Numeric_Unary_Neg
-    = Op_UnaryNegative _ value:(Term_Numeric_Bracketed / Variable_RH / L_Number)
-    {
-        var ret;
-
-        ret = parseFloat (value);
-        ret = 0 - ret;
         
         return ret;
     }
@@ -345,15 +392,19 @@ SingleLineComment
 /* Keywords */
 
 Keyword
-    = Tok_DbgPushDump
+    = Tok_Abs
+    / Tok_Cos
+    / Tok_DbgPushDump
     / Tok_Declare
     / Tok_Else
+    / Tok_Exp
     / Tok_For
     / Tok_Function
     / Tok_If
     / Tok_While
     / Tok_GetSize
     / Tok_LoadImg
+    / Tok_Log
     / Tok_MoveBy
     / Tok_MoveTo
     / Tok_PopFirst
@@ -365,11 +416,14 @@ Keyword
     / Tok_RotateBy
     / Tok_RotateTo
     / Tok_SetTransparency
+    / Tok_Sin
+    / Tok_Sqrt
     / Tok_StepBack
     / Tok_StepForward
+    / Tok_Tan
 
     
-/* --> Core language */
+/* Core language */
 
 Tok_Declare         = "declare"
 Tok_Else            = "else"
@@ -378,6 +432,18 @@ Tok_Function        = "function"
 Tok_If              = "if"
 Tok_Return          = "return"
 Tok_While           = "while"
+
+
+/* Math functions */
+
+Tok_Math            = (Tok_Abs / Tok_Sqrt / Tok_Log / Tok_Exp / Tok_Sin / Tok_Cos / Tok_Tan)
+Tok_Abs             = "abs"
+Tok_Sqrt            = "sqrt"
+Tok_Log             = "log"
+Tok_Exp             = "exp"
+Tok_Sin             = "sin"
+Tok_Cos             = "cos"
+Tok_Tan             = "tan"
 
 
 /* Functions */
@@ -588,9 +654,6 @@ Op_EqualNot
 Op_EqualNotStrict
     = "!=="
     
-Op_PowerOf
-    = "**"
-
 Op_GreaterThan
     = $(">")
 
@@ -608,6 +671,9 @@ Op_Modulo
 
 Op_Multiply
     = $("*")
+
+Op_PowerTo
+    = "**"
 
 Op_SmallerThan
     = $("<")
