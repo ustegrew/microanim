@@ -1,9 +1,8 @@
-if (typeof window.MAL == "undefined")
+if (typeof window.MAL.test == "undefined")
 {
-    throw ("Missing test corpus. Has file '/js/testing_corpus.js' been included before this file ('/js/testing.js')?");
+    throw ("Missing test setup. Have you included '/js/testing/init.js'?");
 }
 
-window.MAL.test.currentCorpus = [];
 window.MAL.test.run = 
 {
     nTestsPerBatch:     500,

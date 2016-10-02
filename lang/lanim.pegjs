@@ -11,7 +11,7 @@
  * more difficult to design.
  *
  * Version:
- *     PH, Tuesday-2016-09-27 18-50-47
+ *     PH, Sunday-2016-10-02 08-15-05
  * 
  * --------
  *
@@ -541,7 +541,7 @@ L_Decimal
 
         return ret;
     }
-    / l0:[0-9]*
+    / l0:[0-9]+
     {
         var vx;
         var ret;
