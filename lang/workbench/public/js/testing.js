@@ -1,6 +1,6 @@
-if (typeof window.MAL.test == "undefined")
+if (typeof window.MAL == "undefined")
 {
-    throw ("Missing test setup. Have you included '/js/testing/init.js'?");
+    throw ("Error: Missing object setup. Have you included '/js/init.js'?");
 }
 
 window.MAL.test.run = 
@@ -37,12 +37,7 @@ window.MAL.test.run.program = function ()
         btnRunAll.disabled  = true;
         
         /* Load QUnit style sheet. */
-        styleElement                = window.document.createElement ("link");
-        styleElement.rel            = "stylesheet";
-        styleElement.type           = "text/css";
-        styleElement.href           = "/vendor/qunit/qunit-2.0.1.css"
-        head                        = document.getElementsByTagName('head')[0];
-        head.appendChild (styleElement);
+        window.MAL.util.LoadStylesheet ("/vendor/qunit/qunit-2.0.1.css");
         
         /* Create parser object from local storage. */
         parserSource = localStorage.getItem ("mal.parserSource");

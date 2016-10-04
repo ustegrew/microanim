@@ -1,0 +1,64 @@
+svg.railroad-diagram {
+  background-color: hsl(30,20%,95%);
+}
+svg.railroad-diagram path {
+  stroke-width: 3;
+  stroke: black;
+  fill: rgba(0,0,0,0);
+}
+svg.railroad-diagram text {
+  font: bold 14px monospace;
+  text-anchor: middle;
+  cursor: pointer;
+}
+svg.railroad-diagram text.label {
+  text-anchor: start;
+}
+svg.railroad-diagram text.comment {
+  font: italic 12px monospace;
+}
+svg.railroad-diagram rect {
+  stroke-width: 3;
+  stroke: black;
+  fill: hsl(120,100%,90%);
+}
+
+.alert {
+  word-wrap: break-word;
+}
+
+.box0_ok
+{
+    border:             2px silver solid;
+    border-radius:      8px;
+    width:              100%;
+    padding:            0.2em;
+}
+
+.box0_warn
+{
+    border:             2px orange solid;
+    border-radius:      8px;
+    width:              100%;
+    padding:            0.2em;
+}
+
+.box0_fatal
+{
+    border:             2px red solid;
+    border-radius:      8px;
+    width:              100%;
+    padding:            0.2em;
+}
+
+.anchors_list
+{
+    margin-bottom:      0.5em;
+}
+
+.anchors_item
+{
+    font-size:          0.2em;
+    margin-right:        0.5em;
+}
+

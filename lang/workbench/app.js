@@ -41,6 +41,10 @@ app.get("/online", function(req, res) {
   res.render("online", { title: "Workbench", layout: "layout-online" });
 });
 
+app.get("/grammkit", function(req, res) {
+  res.render("grammkit", { title: "Syntax diagrams", layout: "layout" });
+});
+
 app.get("/testing", function (req, res){
   res.render ("testing", { title: "Testbench" });
 });
