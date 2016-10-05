@@ -204,6 +204,28 @@ var App = React.createClass
         render: function ()
         {
             /* Various styles; will be hard coded into the generated HTML code [110]  */
+            var kStyleBtnPrint =
+            {
+                height:             "2em",
+                position:           "fixed",
+                right:              "32px;",
+                top:                "32px",
+                width:              "80px"
+            };
+            var kStyleBoxError =
+            {
+                border:             "2px red solid",
+                borderRadius:       "8px",
+                width:              "100%",
+                padding:            "0.2em"
+            };
+            var kStyleBoxWarn =
+            {
+                border:             "2px orange solid",
+                borderRadius:       "8px",
+                width:              "100%",
+                padding:            "0.2em"
+            };
             var kStyleMain =
             {   /* Main panel containing all the diagram tiles */
                 backgroundColor:    "#F5F3F0",              /* [120] */
@@ -273,6 +295,7 @@ var App = React.createClass
 
             var anchorTile;
             var anchors;
+            var btnPrint;
             var diagram;
             var err;
             var hasError;
@@ -303,13 +326,31 @@ var App = React.createClass
             hasRules = (this.grammar.rules.length   >=      1       )
             if (hasError)
             {
-                // TODO finalize design
-                pnlMain = React.createElement ("div", {class: "box0_fatal"}, "Error!");
+                var e;
+                var eType;
+                var cList;
+                var msg;
+                
+                e     = this.grammar.error;
+                eType = e.eType;
+                if (eType == "syn")
+                {
+                    cList   = new Array (e.column).join (" ");
+                    msg     = e.name + ": line " + e.line + ", col " + e.column + ":\\n\\n" + e.grammarSrc + "\\n\\n" + e.message;
+                }
+                else if (eType == "ref")
+                {
+                    msg     = "ReferenceError: " + e.message;
+                }
+                else
+                {
+                    msg     = "Unknown error";
+                }
+                pnlMain = React.createElement ("pre", {style: kStyleBoxError}, msg);
             }
             else if (! hasRules)
             {
-                // TODO finalize design
-                pnlMain = React.createElement ("div",{class: "box0_warn"}, "No rules found!");
+                pnlMain = React.createElement ("div", {style: kStyleBoxWarn}, "No rules found!");
             }
             else
             {
@@ -337,7 +378,8 @@ var App = React.createClass
                     /* Railroad diagram (SVG element). Provides onclick handler which 
                      * scrolls to cross referenced rules used in this diagram.        */
                     pnlDiagram  = React.createElement
-                    ("div",
+                    (
+                        "div",
                         {
                             dangerouslySetInnerHTML:
                             {
@@ -442,11 +484,15 @@ var App = React.createClass
                     iX++;
                     anchors[iX] = React.createElement           ("br");
                 }
+                
+                /* Print button (makes TOC invisible for a short time and triggers print) */
+                btnPrint = React.createElement                  ("button", {id: "btnPrint", style: kStyleBtnPrint, onClick: this.onClickPrint}, "Print");
+                
                 /* Container for TOC */
-                pnlTOC          = React.createElement           ("div", {style: kStyleTOC}, anchors);
+                pnlTOC = React.createElement                    ("div", {id: "pnlTOC", style: kStyleTOC}, anchors);
                 
                 /* Assemble TOC and tiles in main panel object. Note - visually, the TOC panel will be outside the main panel. */
-                pnlMain = React.createElement                   ("div", {style: kStyleMain}, pnlTOC, pnlTiles);
+                pnlMain = React.createElement                   ("div", {style: kStyleMain}, btnPrint, pnlTOC, pnlTiles);
             }
 
             ret = pnlMain;
@@ -467,6 +513,32 @@ var App = React.createClass
                 link          = ev.target.textContent.trim ();
                 location.hash = link;
             }
+        },
+ 
+        onClickPrint: function (ev)
+        {
+            var btnPrint;
+            var pnlTOC;
+            
+            /* Table of content menu and print button mess up the printout by hiding some diagrams.
+             * Make them invisible for a short time, so the print function can kick in 
+             * and gets a pristine page */
+            btnPrint = document.getElementById ("btnPrint");
+            pnlTOC   = document.getElementById ("pnlTOC");
+            pnlTOC.style.visibility = "hidden";
+            btnPrint.style.visibility = "hidden";
+            window.setTimeout
+            (
+                function ()
+                {
+                    pnlTOC.style.visibility = "visible";
+                    btnPrint.style.visibility = "visible";
+                },
+                1000
+            );
+            
+            /* Now print */
+            window.print ();
         },
 
         /**
@@ -537,8 +609,9 @@ var App = React.createClass
             grSrc = localStorage.getItem ("mal.grammar");
             if (grSrc === null)
             {
-                grSrc = "";
-                err   = new ReferenceError ("Found no grammar in localStore.");
+                grSrc       = "";
+                err         = new ReferenceError ("Found no grammar in localStore.");
+                err.eType   = "ref";
             }
             
             this.grammar.src    = grSrc;
@@ -569,6 +642,7 @@ var App = React.createClass
                     {
                         synErr              = e;
                         synErr.grammarSrc   = this.grammar.src.split ("\\n")[e.line-1];
+                        synErr.eType        = "syn";
                     }
                 }
                 
