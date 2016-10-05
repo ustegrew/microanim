@@ -145,6 +145,20 @@ console.log (r);
 /* module id:  91 */ function(module,exports,__webpack_require__){eval("\n/**\n * Module dependencies.\n */\n\nvar now = __webpack_require__(92);\n\n/**\n * Returns a function, that, as long as it continues to be invoked, will not\n * be triggered. The function will be called after it stops being called for\n * N milliseconds. If `immediate` is passed, trigger the function on the\n * leading edge, instead of the trailing.\n *\n * @source underscore.js\n * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/\n * @param {Function} function to wrap\n * @param {Number} timeout in ms (`100`)\n * @param {Boolean} whether to execute at the beginning (`false`)\n * @api public\n */\n\nmodule.exports = function debounce(func, wait, immediate){\n  var timeout, args, context, timestamp, result;\n  if (null == wait) wait = 100;\n\n  function later() {\n    var last = now() - timestamp;\n\n    if (last < wait && last > 0) {\n      timeout = setTimeout(later, wait - last);\n    } else {\n      timeout = null;\n      if (!immediate) {\n        result = func.apply(context, args);\n        if (!timeout) context = args = null;\n      }\n    }\n  };\n\n  return function debounced() {\n    context = this;\n    args = arguments;\n    timestamp = now();\n    var callNow = immediate && !timeout;\n    if (!timeout) timeout = setTimeout(later, wait);\n    if (callNow) {\n      result = func.apply(context, args);\n      context = args = null;\n    }\n\n    return result;\n  };\n};\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./~/debounce/index.js\n ** module id = 91\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./~/debounce/index.js?")},
 /* module id:  92 */ function(module,exports,__webpack_require__){eval("module.exports = Date.now || now\n\nfunction now() {\n    return new Date().getTime()\n}\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./~/debounce/~/date-now/index.js\n ** module id = 92\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./~/debounce/~/date-now/index.js?")},
 /* module id:  93 */ function(module,exports,__webpack_require__){eval('module.exports = [\n	{\n		"name": "Arithmetic",\n		"source": "start\\n    = additive\\n\\n  additive\\n    = left:multiplicative \\"+\\" right:additive { return left + right; }\\n    / multiplicative\\n\\n  multiplicative\\n    = left:primary \\"*\\" right:multiplicative { return left * right; }\\n    / primary\\n\\n  primary\\n    = integer\\n    / \\"(\\" additive:additive \\")\\" { return additive; }\\n\\n  integer \\"integer\\"\\n    = digits:[0-9]+ { return parseInt(digits.join(\\"\\"), 10); }"\n	},\n	{\n		"name": "SPARQL",\n		"link": "./examples/sparql.ebnf"\n	},\n	{\n		"name": "ArchieML",\n		"link": "https://cdn.rawgit.com/dundalek/archieml-peg/6d882f42de57d850f72772cde9aadc7a4ee579bf/aml.parser.pegjs"\n	},\n	{\n		"name": "JSON",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/fb5f6c6ee94b962c45f591f64b293bc11ba57ae6/examples/json.pegjs"\n	},\n	{\n		"name": "URI",\n		"link": "https://cdn.rawgit.com/for-GET/core-pegjs/e34d41427da15290c03b5adcea13b4f50953e410/src/ietf/rfc3986-uri.pegjs"\n	},\n	{\n		"name": "XPath",\n		"link": "https://cdn.rawgit.com/for-GET/core-pegjs/975eac813d2418a492af2e48e9cbb590ba2cf6e3/src/w3c/xpath.pegjs"\n	},\n	{\n		"name": "ABNF",\n		"link": "https://raw.githubusercontent.com/for-GET/core-pegjs/f983ef4d75f442bd4405319c981f1cd05f7136a4/src/ietf/rfc5234-abnf.pegjs"\n	},\n	{\n		"name": "CSS",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/200534597620cc818b9cd24b032c661fd770e138/examples/css.pegjs"\n	},\n	{\n		"name": "JavaScript",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/c13cc882626a245a7a5a97af036f95e40e50a2c7/examples/javascript.pegjs"\n	}\n]\n\n/*****************\n ** WEBPACK FOOTER\n ** ./app/examples.json\n ** module id = 93\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./app/examples.json?')},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* module id:  94 */
 function (module,exports,__webpack_require__){eval(`
 var React           = __webpack_require__(104);
@@ -655,6 +669,22 @@ module.exports = App;
 //# sourceURL=webpack:///./app/app.js?
 `
 )},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* module id:  95 */ function(module,exports,__webpack_require__){eval("'use strict';\n\nvar React = __webpack_require__(180),\n    App = __webpack_require__(94);\n\nReact.render(React.createElement(App, null), document.getElementById('app'));\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./app/index.js\n ** module id = 95\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./app/index.js?")},
 /* module id:  96 */ function(module,exports,__webpack_require__){eval("var pegRd = __webpack_require__(97);\nvar rdOptimizeLoops = __webpack_require__(99);\nvar rdToString = __webpack_require__(100);\n\nmodule.exports = function(expr) {\n  expr = pegRd(expr);\n  expr = rdOptimizeLoops(expr);\n  expr = rdToString(expr);\n  return expr;\n}\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/diagram.js\n ** module id = 96\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/diagram.js?")},
 /* module id:  97 */ function(module,exports,__webpack_require__){eval("var rd = __webpack_require__(54);\nvar whitescape = __webpack_require__(182);\n\nvar rdAst = {};\nvar methods = Object.keys(rd).concat(['Start', 'End']);\nmethods.forEach(function(type) {\n  rdAst[type] = function() {\n    return {\n      type: type,\n      arguments: [].slice.call(arguments)\n    };\n  }\n});\nrd = rdAst;\n\nmodule.exports = function diagram(expr) {\n  switch (expr.type) {\n    case 'rule':\n      // rules = expression\n      return rd.Diagram(diagram(expr.expression));\n\n    case 'text':\n      // $expression\n    case 'labeled':\n      // label : expression\n    case 'named':\n      // rule \"name\" = expression\n    case 'action':\n      // expression {action}\n      return diagram(expr.expression);\n\n    case 'sequence':\n      // expression1 expression2 ...\n      return rd.Sequence.apply(null, expr.elements.map(diagram));\n\n    case 'choice':\n      // expression1 / expression2 / ...\n      return rd.Choice.apply(null, [0].concat(expr.alternatives.map(diagram)));\n\n    case 'optional':\n      // expression ?\n      return rd.Optional(diagram(expr.expression));\n\n    case 'zero_or_more':\n      // expression *\n      return rd.ZeroOrMore(diagram(expr.expression));\n\n    case 'one_or_more':\n      // expression +\n      return rd.OneOrMore(diagram(expr.expression));\n\n    case 'rule_ref':\n      // rule\n      return rd.NonTerminal(expr.name);\n\n    case 'literal':\n      // 'literal'\n      return rd.Terminal(whitescape(expr.value));\n\n    case 'class':\n      // [characters]\n      return rd.Terminal(expr.rawText);\n    \n    case 'any':\n      // wildcard\n      // .\n      return rd.Terminal('[any character]');\n\n    case 'simple_and':\n      // lookahead\n      // & expression\n      return diagram(expr.expression);\n    \n    case 'simple_not':\n      // negative lookahead\n      // ! expression\n      return rd.Optional(rd.Sequence(rd.End(), diagram(expr.expression)), 'skip');\n\n    case 'semantic_and':\n      // predicate lookahead\n      // & { predicate }\n      return rd.Terminal('[match:' + expr.code + ']');\n      \n    case 'semantic_not':\n      // negative predicate lookahead\n      // ! { predicate }\n      return diagram({\n        type: 'simple_not',\n        expression: {type: 'class', rawText: '[match:' + expr.code + ']'}\n      });\n  }\n  var msg = 'Unknown expression:' + expr.type;\n  console.log(msg, expr);\n  return rd.Terminal(msg);\n};\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/peg-rd.js\n ** module id = 97\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/peg-rd.js?")},
