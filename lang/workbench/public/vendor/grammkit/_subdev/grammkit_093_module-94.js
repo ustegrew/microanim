@@ -57,6 +57,22 @@ var App = React.createClass
          */
         render: function ()
         {
+            var kStyleTOC =
+            {
+                border:             "1px solid silver",
+                borderRadius:       "8px",
+                padding:            "8px",
+                fontSize:           "small",
+                color:              "gray",
+                marginLeft:         "1em",
+                overflow:           "scroll",
+                display:            "inline-block",
+                width:              "200px",
+                height:             "450px",
+                position:           "fixed",
+                top:                "10px",
+                left:               "10px"
+            }
             var kStyleLink =
             {   /* [110] */
                 marginRight:        "1em"
@@ -70,6 +86,11 @@ var App = React.createClass
                 marginBottom:       "0.5em",
                 wordWrap:           "break-word",
                 wordBreak:          "normal"
+            };
+            var kStyleSpacer =
+            {
+                width:              "80px",
+                float:              "left"
             }
 
             var hasError;
@@ -88,13 +109,16 @@ var App = React.createClass
             var x;
             var link;
             var pnlMain;
+            var pnlTOC;
             var anchorTile;
             var pnlTiles;
             var pnlName;
             var pnlDiagram;
             var pnlRefs;
             var pnlUsedBys;
+            var pnlSpacer;
             var anchors;
+            var tocLinks;
             var ret;
 
             hasError = (this.grammar.error          !==     null    )
@@ -102,26 +126,12 @@ var App = React.createClass
             if (hasError)
             {
                 // TODO finalize design
-                pnlMain = React.createElement
-                (
-                    "div",
-                    {
-                        class:          "box0_fatal"
-                    },
-                    "Error!"
-                );
+                pnlMain = React.createElement ("div", {class: "box0_fatal"}, "Error!");
             }
             else if (! hasRules)
             {
                 // TODO finalize design
-                pnlMain = React.createElement
-                (
-                    "div",
-                    {
-                        class:          "box0_warn"
-                    },
-                    "No rules found!"
-                );
+                pnlMain = React.createElement ("div",{class: "box0_warn"}, "No rules found!");
             }
             else
             {
@@ -142,23 +152,10 @@ var App = React.createClass
                     refs        = rule.references;
                     usedBys     = rule.usedBys;
                     
-                    anchorTile = React.createElement
-                    (
-                        "a",
-                        {
-                            name: name
-                        },
-                        ""
-                    );
-                    pnlName = React.createElement
-                    (
-                        "h3",
-                        null,
-                        name
-                    );
-                    pnlDiagram = React.createElement
-                    (
-                        "div",
+                    anchorTile  = React.createElement           ("a",   {name: name}                            );
+                    pnlName     = React.createElement           ("h3",  null,                               name);
+                    pnlDiagram  = React.createElement
+                    ("div",
                         {
                             dangerouslySetInnerHTML:
                             {
@@ -176,35 +173,14 @@ var App = React.createClass
                         {
                             x       = refs [iX];
                             link    = "#" + x;
-                            anchors[iX] = React.createElement 
-                            (
-                                "a",
-                                {
-                                    href:   link,
-                                    style:  kStyleLink
-                                },
-                                x
-                            );
+                            anchors[iX] = React.createElement   ("a", {href: link, style:kStyleLink}, x);
                         }
-                        pnlRefs = React.createElement
-                        (
-                            "div",
-                            {
-                                style:      kStyleLinkList
-                            },
-                            anchors
-                        );
+                        pnlSpacer   = React.createElement       ("div", {style: kStyleSpacer},   "Referring: ");
+                        pnlRefs     = React.createElement       ("div", {style: kStyleLinkList}, pnlSpacer, anchors);
                     }
                     else
                     {
-                        pnlRefs = React.createElement
-                        (
-                            "div",
-                            {
-                                style:      kStyleLinkList
-                            },
-                            "No reference to other rules"
-                        )
+                        pnlRefs = React.createElement           ("div", {style: kStyleLinkList}, "No reference to other rules");
                     }
                     
 
@@ -216,35 +192,14 @@ var App = React.createClass
                         {
                             x       = usedBys [iX];
                             link    = "#" + x;
-                            anchors[iX] = React.createElement 
-                            (
-                                "a",
-                                {
-                                    href:   link,
-                                    style:  kStyleLink
-                                },
-                                x
-                            );
+                            anchors[iX] = React.createElement   ("a", {href: link, style: kStyleLink}, x);
                         }
-                        pnlUsedBys = React.createElement
-                        (
-                            "div",
-                            {
-                                style:      kStyleLinkList
-                            },
-                            anchors
-                        );
+                        pnlSpacer   = React.createElement       ("div", {style: kStyleSpacer},  "Used by: ");
+                        pnlUsedBys = React.createElement        ("div", {style: kStyleLinkList}, pnlSpacer, anchors);
                     }
                     else
                     {
-                        pnlUsedBys = React.createElement
-                        (
-                            "div",
-                            {
-                                style:      kStyleLinkList
-                            },
-                            "Not used by other rules"
-                        )
+                        pnlUsedBys = React.createElement        ("div", {style: kStyleLinkList},"Not used by other rules")
                     }
                     
                     pnlTiles[iRule] = React.createElement
@@ -268,10 +223,32 @@ var App = React.createClass
                     )
                 }
                 
+                tocLinks = [];
+                for (iRule = 0; iRule < nRules; iRule++)
+                {
+                    rule            = rules [iRule];
+                    tocLinks[iRule] = rule.name;
+                }
+                tocLinks.sort ();
+                
+                iX      = -1;
+                for (iRule = 0; iRule < nRules; iRule++)
+                {
+                    link    = "#" + tocLinks[iRule];
+                    
+                    iX++;
+                    anchors[iX] = React.createElement       ("a", {href: link, style: kStyleLink}, tocLinks[iRule]);
+                    
+                    iX++;
+                    anchors[iX] = React.createElement       ("br", null);
+                }
+                pnlTOC          = React.createElement       ("div", {style: kStyleTOC}, anchors);
+                
                 pnlMain = React.createElement
                 (
                     "div",
                     null,
+                    pnlTOC,
                     pnlTiles
                 );
             }
