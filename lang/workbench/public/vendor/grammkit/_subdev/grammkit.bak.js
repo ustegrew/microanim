@@ -29,7 +29,6 @@
  */
 !function(e) {
     function n(r) {
-console.log (r);
         if (t[r])
             return t[r].exports;
         var a = t[r] = {
@@ -204,70 +203,102 @@ var App = React.createClass
          */
         render: function ()
         {
-            var kStyleTOC =
-            {
-                border:             "1px solid silver",
+            /* Various styles; will be hard coded into the generated HTML code [110]  */
+            var kStyleMain =
+            {   /* Main panel containing all the diagram tiles */
+                backgroundColor:    "#F5F3F0",              /* [120] */
+                border:             "2px solid silver",
                 borderRadius:       "8px",
-                padding:            "8px",
-                fontSize:           "small",
+                padding:            "8px"
+            };
+            var kStyleTOC =
+            {   /* LH Table of contents */
+                backgroundColor:    "#F5F3F0",              /* [120] */
+                border:             "2px solid silver",
+                borderRadius:       "8px",
                 color:              "gray",
+                display:            "inline-block",
+                fontSize:           "small",
+                height:             "450px",
+                left:               "10px",
                 marginLeft:         "1em",
                 overflow:           "scroll",
-                display:            "inline-block",
-                width:              "200px",
-                height:             "450px",
+                padding:            "8px",
                 position:           "fixed",
-                top:                "10px",
-                left:               "10px"
-            }
+                top:                "32px",
+                width:              "200px"
+            };
+            var kStyleTile =
+            {   /* Tile for each rule diagram  */
+                border:             "2px silver solid",
+                borderRadius:       "8px",
+                boxSizing:          "border-box",
+                marginBottom:       "0.8em",
+                marginRight:        "12px",
+                paddingLeft:        "0.8em",
+                width:              "100%"
+            };
+            var kStyleSpacer =
+            {   /* List title for "Referring" and "UsedBy" link lists */
+                verticalAlign:      "middle",
+                width:              "70px"
+            };
             var kStyleLink =
-            {   /* [110] */
+            {   /* Links in "TOC", "Referring" lists and "UsedBy" lists */
+                color:              "gray",
                 marginRight:        "1em"
             };
             var kStyleLinkList =
-            {   /* [110] */
-                fontSize:           "small",
-                color:              "gray",
-                marginLeft:         "1em",
-                marginRight:        "1em",
+            {   /* Container for "Referring" lists and "UsedBy" lists */
                 marginBottom:       "0.5em",
+                wordBreak:          "normal",
                 wordWrap:           "break-word",
-                wordBreak:          "normal"
+                width:              "640px"
             };
-            var kStyleSpacer =
-            {
-                width:              "80px",
-                float:              "left"
-            }
+            var kStyleListCellL =
+            {   /* Table cell containing "Referring"/"UsedBy" lists and headers */
+                align:              "left",
+                verticalAlign:      "top"
+            };
+            var kStyleListCellR =
+            {   /* Table cell containing "Referring"/"UsedBy" lists and headers */
+                align:              "left",
+                verticalAlign:      "top"
+            };
+            var kStyleListTable =
+            {   /* Table containing "Referring"/"UsedBy" lists and headers */
+                fontSize:           "small",
+                width:              "100%"
+            };
 
+            var anchorTile;
+            var anchors;
+            var diagram;
+            var err;
             var hasError;
             var hasRules;
-            var err;
-            var rules;
             var iRule;
-            var nRules;
-            var rule;
-            var name;
-            var diagram;
-            var refs;
-            var usedBys;
             var iX;
-            var nX;
-            var x;
             var link;
-            var pnlMain;
-            var pnlTOC;
-            var anchorTile;
-            var pnlTiles;
-            var pnlName;
+            var nRules;
+            var nX;
+            var name;
             var pnlDiagram;
+            var pnlMain;
+            var pnlName;
             var pnlRefs;
-            var pnlUsedBys;
             var pnlSpacer;
-            var anchors;
-            var tocLinks;
+            var pnlTOC;
+            var pnlTiles;
+            var pnlUsedBys;
+            var refs;
             var ret;
-
+            var rule;
+            var rules;
+            var tocLinks;
+            var usedBys;
+            var x;
+            
             hasError = (this.grammar.error          !==     null    )
             hasRules = (this.grammar.rules.length   >=      1       )
             if (hasError)
@@ -282,25 +313,27 @@ var App = React.createClass
             }
             else
             {
-                // TODO Adjust refs and usedBy links - CSS
-                //      list container: marginLeft:  1em
-                //                      word-wrap
-                //      each link:      marginRight: 1em
-                // TODO Adjust tile panels - CSS
-                //      padding-left: 1em;
+                /* Create tiles containing rule name, diagram, Referring list and UsedBy list */
                 pnlTiles    = [];
                 rules       = this.grammar.rules;
                 nRules      = rules.length;
                 for (iRule = 0; iRule < nRules; iRule++)
                 {
+                    /* Retrieve next analyzed rule */
                     rule        = rules[iRule];
                     name        = rule.name;
                     diagram     = rule.diagram;
                     refs        = rule.references;
                     usedBys     = rule.usedBys;
                     
-                    anchorTile  = React.createElement           ("a",   {name: name}                            );
-                    pnlName     = React.createElement           ("h3",  null,                               name);
+                    /* Named anchor for # link */
+                    anchorTile  = React.createElement           ("a",   {name: name});
+                    
+                    /* Title showing rule name */
+                    pnlName     = React.createElement           ("h3",  null, name);
+                    
+                    /* Railroad diagram (SVG element). Provides onclick handler which 
+                     * scrolls to cross referenced rules used in this diagram.        */
                     pnlDiagram  = React.createElement
                     ("div",
                         {
@@ -312,7 +345,11 @@ var App = React.createClass
                         }
                     );
 
-                    nX = refs.length;
+                    /* Create list of Referring links. */
+                    /* List title */
+                    pnlSpacer   = React.createElement           ("div", {style: kStyleSpacer},   "Referring: ");
+                    /* List items */
+                    nX          = refs.length;
                     if (nX >= 1)
                     {
                         anchors = [];
@@ -322,16 +359,22 @@ var App = React.createClass
                             link    = "#" + x;
                             anchors[iX] = React.createElement   ("a", {href: link, style:kStyleLink}, x);
                         }
-                        pnlSpacer   = React.createElement       ("div", {style: kStyleSpacer},   "Referring: ");
-                        pnlRefs     = React.createElement       ("div", {style: kStyleLinkList}, pnlSpacer, anchors);
+                        pnlRefs = React.createElement           ("div", {style: kStyleLinkList}, anchors);
                     }
                     else
                     {
                         pnlRefs = React.createElement           ("div", {style: kStyleLinkList}, "No reference to other rules");
                     }
+                    /* Put list and heading into table row. */
+                    tblCell_0        = React.createElement      ("td", {style: kStyleListCellL}, pnlSpacer);
+                    tblCell_1        = React.createElement      ("td", {style: kStyleListCellR}, pnlRefs);
+                    tblRow_0         = React.createElement      ("tr", null, tblCell_0, tblCell_1);
                     
-
-                    nX = usedBys.length;
+                    /* Create list of UsedBy links (reverse referring). */
+                    /* List title */
+                    pnlSpacer   = React.createElement           ("div", {style: kStyleSpacer},  "Used by: ");
+                    /* List items */
+                    nX          = usedBys.length;
                     if (nX >= 1)
                     {
                         anchors = [];
@@ -341,63 +384,52 @@ var App = React.createClass
                             link    = "#" + x;
                             anchors[iX] = React.createElement   ("a", {href: link, style: kStyleLink}, x);
                         }
-                        pnlSpacer   = React.createElement       ("div", {style: kStyleSpacer},  "Used by: ");
-                        pnlUsedBys = React.createElement        ("div", {style: kStyleLinkList}, pnlSpacer, anchors);
+                        pnlUsedBys = React.createElement        ("div", {style: kStyleLinkList}, anchors);
                     }
                     else
                     {
                         pnlUsedBys = React.createElement        ("div", {style: kStyleLinkList},"Not used by other rules")
                     }
+                    /* Put list and heading into table row. */
+                    tblCell_0        = React.createElement      ("td", {style: kStyleListCellL}, pnlSpacer);
+                    tblCell_1        = React.createElement      ("td", {style: kStyleListCellR}, pnlUsedBys);
+                    tblRow_1         = React.createElement      ("tr", null, tblCell_0, tblCell_1);
                     
-                    pnlTiles[iRule] = React.createElement
-                    (
-                        "div",
-                        {
-                            style:
-                            {   /* [110] */
-                                border:             "2px silver solid",
-                                borderRadius:       "8px",
-                                width:              "100%",
-                                paddingLeft:        "0.8em",
-                                marginBottom:       "0.8em"
-                            }
-                        },
-                        anchorTile,
-                        pnlName,
-                        pnlDiagram,
-                        pnlRefs,
-                        pnlUsedBys
-                    )
+                    /* Assemble refs link table */
+                    tblLists         = React.createElement      ("table", {style: kStyleListTable}, tblRow_0, tblRow_1);
+                    
+                    /* Assemble diagram tile. */
+                    pnlTiles [iRule] = React.createElement      ("div", {style: kStyleTile}, anchorTile, pnlName, pnlDiagram, tblLists);
                 }
                 
+                /* Create table of contents. This will appear in a fixed position on the LH side of the viewport. */
+                /* Links will be in alphabetical order. */
                 tocLinks = [];
                 for (iRule = 0; iRule < nRules; iRule++)
                 {
                     rule            = rules [iRule];
-                    tocLinks[iRule] = rule.name;
+                    tocLinks [iRule] = rule.name;
                 }
                 tocLinks.sort ();
                 
-                iX      = -1;
+                iX = -1;
                 for (iRule = 0; iRule < nRules; iRule++)
                 {
-                    link    = "#" + tocLinks[iRule];
+                    link    = "#" + tocLinks [iRule];
                     
+                    /* Rule link */
                     iX++;
-                    anchors[iX] = React.createElement       ("a", {href: link, style: kStyleLink}, tocLinks[iRule]);
+                    anchors[iX] = React.createElement           ("a", {href: link, style: kStyleLink}, tocLinks[iRule]);
                     
+                    /* <br/> tag, so the next rule starts on a new line. */
                     iX++;
-                    anchors[iX] = React.createElement       ("br", null);
+                    anchors[iX] = React.createElement           ("br");
                 }
-                pnlTOC          = React.createElement       ("div", {style: kStyleTOC}, anchors);
+                /* Container for TOC */
+                pnlTOC          = React.createElement           ("div", {style: kStyleTOC}, anchors);
                 
-                pnlMain = React.createElement
-                (
-                    "div",
-                    null,
-                    pnlTOC,
-                    pnlTiles
-                );
+                /* Assemble TOC and tiles in main panel object. Note - visually, the TOC panel will be outside the main panel. */
+                pnlMain = React.createElement                   ("div", {style: kStyleMain}, pnlTOC, pnlTiles);
             }
 
             ret = pnlMain;
@@ -409,7 +441,8 @@ var App = React.createClass
          */
         onClickDiagram: function (ev)
         {
-            // if the node was clicked then go to rule definition
+            /* If the clicked node is a text node then it's likely being a cross 
+             * referenceable rule -> Try to navigate to it.*/
             if (ev.target.tagName === "text")
             {
                 var link;
@@ -610,6 +643,8 @@ var App = React.createClass
 
  [110]: For some reason, the .class attribute won't carry over into the generated HTML 
         code. I'll try hard coding the stylesheet attributes. No time to deep learn ReactJS.
+        
+ [120]: Background color of each railroad diagram, as delivered by generator library.
  
 */
 
