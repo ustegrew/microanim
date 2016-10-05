@@ -167,6 +167,8 @@ var App = React.createClass
             }
             else
             {
+                // TODO repetetive code -> export to private method.
+                
                 /* Create tiles containing rule name, diagram, Referring list and UsedBy list */
                 pnlTiles    = [];
                 rules       = this.grammar.rules;
@@ -206,10 +208,17 @@ var App = React.createClass
                     nX          = refs.length;
                     if (nX >= 1)
                     {
+                        tocLinks = [];
+                        for (iX = 0; iX < nX; iX++)
+                        {
+                            tocLinks [iX] = refs [iX];
+                        }
+                        tocLinks.sort ();
+                        
                         anchors = [];
                         for (iX = 0; iX < nX; iX++)
                         {
-                            x       = refs [iX];
+                            x       = tocLinks [iX];
                             link    = "#" + x;
                             anchors[iX] = React.createElement   ("a", {href: link, style:kStyleLink}, x);
                         }
@@ -231,10 +240,17 @@ var App = React.createClass
                     nX          = usedBys.length;
                     if (nX >= 1)
                     {
+                        tocLinks = [];
+                        for (iX = 0; iX < nX; iX++)
+                        {
+                            tocLinks [iX] = usedBys [iX];
+                        }
+                        tocLinks.sort ();
+                        
                         anchors = [];
                         for (iX = 0; iX < nX; iX++)
                         {
-                            x       = usedBys [iX];
+                            x       = tocLinks [iX];
                             link    = "#" + x;
                             anchors[iX] = React.createElement   ("a", {href: link, style: kStyleLink}, x);
                         }
