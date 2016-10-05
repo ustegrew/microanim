@@ -145,20 +145,6 @@ console.log (r);
 /* module id:  91 */ function(module,exports,__webpack_require__){eval("\n/**\n * Module dependencies.\n */\n\nvar now = __webpack_require__(92);\n\n/**\n * Returns a function, that, as long as it continues to be invoked, will not\n * be triggered. The function will be called after it stops being called for\n * N milliseconds. If `immediate` is passed, trigger the function on the\n * leading edge, instead of the trailing.\n *\n * @source underscore.js\n * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/\n * @param {Function} function to wrap\n * @param {Number} timeout in ms (`100`)\n * @param {Boolean} whether to execute at the beginning (`false`)\n * @api public\n */\n\nmodule.exports = function debounce(func, wait, immediate){\n  var timeout, args, context, timestamp, result;\n  if (null == wait) wait = 100;\n\n  function later() {\n    var last = now() - timestamp;\n\n    if (last < wait && last > 0) {\n      timeout = setTimeout(later, wait - last);\n    } else {\n      timeout = null;\n      if (!immediate) {\n        result = func.apply(context, args);\n        if (!timeout) context = args = null;\n      }\n    }\n  };\n\n  return function debounced() {\n    context = this;\n    args = arguments;\n    timestamp = now();\n    var callNow = immediate && !timeout;\n    if (!timeout) timeout = setTimeout(later, wait);\n    if (callNow) {\n      result = func.apply(context, args);\n      context = args = null;\n    }\n\n    return result;\n  };\n};\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./~/debounce/index.js\n ** module id = 91\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./~/debounce/index.js?")},
 /* module id:  92 */ function(module,exports,__webpack_require__){eval("module.exports = Date.now || now\n\nfunction now() {\n    return new Date().getTime()\n}\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./~/debounce/~/date-now/index.js\n ** module id = 92\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./~/debounce/~/date-now/index.js?")},
 /* module id:  93 */ function(module,exports,__webpack_require__){eval('module.exports = [\n	{\n		"name": "Arithmetic",\n		"source": "start\\n    = additive\\n\\n  additive\\n    = left:multiplicative \\"+\\" right:additive { return left + right; }\\n    / multiplicative\\n\\n  multiplicative\\n    = left:primary \\"*\\" right:multiplicative { return left * right; }\\n    / primary\\n\\n  primary\\n    = integer\\n    / \\"(\\" additive:additive \\")\\" { return additive; }\\n\\n  integer \\"integer\\"\\n    = digits:[0-9]+ { return parseInt(digits.join(\\"\\"), 10); }"\n	},\n	{\n		"name": "SPARQL",\n		"link": "./examples/sparql.ebnf"\n	},\n	{\n		"name": "ArchieML",\n		"link": "https://cdn.rawgit.com/dundalek/archieml-peg/6d882f42de57d850f72772cde9aadc7a4ee579bf/aml.parser.pegjs"\n	},\n	{\n		"name": "JSON",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/fb5f6c6ee94b962c45f591f64b293bc11ba57ae6/examples/json.pegjs"\n	},\n	{\n		"name": "URI",\n		"link": "https://cdn.rawgit.com/for-GET/core-pegjs/e34d41427da15290c03b5adcea13b4f50953e410/src/ietf/rfc3986-uri.pegjs"\n	},\n	{\n		"name": "XPath",\n		"link": "https://cdn.rawgit.com/for-GET/core-pegjs/975eac813d2418a492af2e48e9cbb590ba2cf6e3/src/w3c/xpath.pegjs"\n	},\n	{\n		"name": "ABNF",\n		"link": "https://raw.githubusercontent.com/for-GET/core-pegjs/f983ef4d75f442bd4405319c981f1cd05f7136a4/src/ietf/rfc5234-abnf.pegjs"\n	},\n	{\n		"name": "CSS",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/200534597620cc818b9cd24b032c661fd770e138/examples/css.pegjs"\n	},\n	{\n		"name": "JavaScript",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/c13cc882626a245a7a5a97af036f95e40e50a2c7/examples/javascript.pegjs"\n	}\n]\n\n/*****************\n ** WEBPACK FOOTER\n ** ./app/examples.json\n ** module id = 93\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./app/examples.json?')},
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* module id:  94 */
 function (module,exports,__webpack_require__){eval(`
 var React           = __webpack_require__(104);
@@ -218,6 +204,21 @@ var App = React.createClass
          */
         render: function ()
         {
+            var kStyleLink =
+            {   /* [110] */
+                marginRight:        "1em"
+            };
+            var kStyleLinkList =
+            {   /* [110] */
+                fontSize:           "small",
+                color:              "gray",
+                marginLeft:         "1em",
+                marginRight:        "1em",
+                marginBottom:       "0.5em",
+                wordWrap:           "break-word",
+                wordBreak:          "normal"
+            }
+
             var hasError;
             var hasRules;
             var err;
@@ -326,13 +327,8 @@ var App = React.createClass
                             (
                                 "a",
                                 {
-                                    href: link,
-                                    style:
-                                    {   /* [110] */
-                                        fontSize:           "small",
-                                        color:              "gray",
-                                        marginLeft:         "1em"
-                                    }
+                                    href:   link,
+                                    style:  kStyleLink
                                 },
                                 x
                             );
@@ -341,10 +337,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom: "0.5em"
-                                }
+                                style:      kStyleLinkList
                             },
                             anchors
                         );
@@ -355,13 +348,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom:       "0.5em",
-                                    marginLeft:         "1em",
-                                    fontSize:           "small",
-                                    color:              "gray"
-                                }
+                                style:      kStyleLinkList
                             },
                             "No reference to other rules"
                         )
@@ -380,13 +367,8 @@ var App = React.createClass
                             (
                                 "a",
                                 {
-                                    href: link,
-                                    style:
-                                    {   /* [110] */
-                                        fontSize:           "small",
-                                        color:              "gray",
-                                        marginLeft:         "0.5em"
-                                    }
+                                    href:   link,
+                                    style:  kStyleLink
                                 },
                                 x
                             );
@@ -395,10 +377,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom: "0.1em"
-                                }
+                                style:      kStyleLinkList
                             },
                             anchors
                         );
@@ -409,13 +388,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom:       "0.1em",
-                                    marginLeft:         "1em",
-                                    fontSize:           "small",
-                                    color:              "gray"
-                                }
+                                style:      kStyleLinkList
                             },
                             "Not used by other rules"
                         )
@@ -462,7 +435,10 @@ var App = React.createClass
             // if the node was clicked then go to rule definition
             if (ev.target.tagName === "text")
             {
-                location.hash = ev.target.textContent;
+                var link;
+                
+                link          = ev.target.textContent.trim ();
+                location.hash = link;
             }
         },
 
@@ -591,6 +567,7 @@ var App = React.createClass
             var refs;
             var usedBys;
             var iRef;
+            var svg;
 
             if (this.grammar.ast !== null)
             {
@@ -604,6 +581,7 @@ var App = React.createClass
                         rule    = this.grammar.ast.rules [iRule];
                         refs    = [];
                         usedBys = [];
+                        svg     = diagram (rule);
                         if (typeof references[rule.name] != 'undefined')
                         {
                             refs0       = references[rule.name].references;
@@ -629,7 +607,7 @@ var App = React.createClass
                         rules[iRule] =
                         {
                             name:           rule.name,
-                            diagram:        diagram (rule),
+                            diagram:        svg,
                             references:     refs,
                             usedBys:        usedBys
                         };
@@ -669,25 +647,186 @@ module.exports = App;
 //# sourceURL=webpack:///./app/app.js?
 `
 )},
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* module id:  95 */ function(module,exports,__webpack_require__){eval("'use strict';\n\nvar React = __webpack_require__(180),\n    App = __webpack_require__(94);\n\nReact.render(React.createElement(App, null), document.getElementById('app'));\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./app/index.js\n ** module id = 95\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./app/index.js?")},
 /* module id:  96 */ function(module,exports,__webpack_require__){eval("var pegRd = __webpack_require__(97);\nvar rdOptimizeLoops = __webpack_require__(99);\nvar rdToString = __webpack_require__(100);\n\nmodule.exports = function(expr) {\n  expr = pegRd(expr);\n  expr = rdOptimizeLoops(expr);\n  expr = rdToString(expr);\n  return expr;\n}\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/diagram.js\n ** module id = 96\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/diagram.js?")},
-/* module id:  97 */ function(module,exports,__webpack_require__){eval("var rd = __webpack_require__(54);\nvar whitescape = __webpack_require__(182);\n\nvar rdAst = {};\nvar methods = Object.keys(rd).concat(['Start', 'End']);\nmethods.forEach(function(type) {\n  rdAst[type] = function() {\n    return {\n      type: type,\n      arguments: [].slice.call(arguments)\n    };\n  }\n});\nrd = rdAst;\n\nmodule.exports = function diagram(expr) {\n  switch (expr.type) {\n    case 'rule':\n      // rules = expression\n      return rd.Diagram(diagram(expr.expression));\n\n    case 'text':\n      // $expression\n    case 'labeled':\n      // label : expression\n    case 'named':\n      // rule \"name\" = expression\n    case 'action':\n      // expression {action}\n      return diagram(expr.expression);\n\n    case 'sequence':\n      // expression1 expression2 ...\n      return rd.Sequence.apply(null, expr.elements.map(diagram));\n\n    case 'choice':\n      // expression1 / expression2 / ...\n      return rd.Choice.apply(null, [0].concat(expr.alternatives.map(diagram)));\n\n    case 'optional':\n      // expression ?\n      return rd.Optional(diagram(expr.expression));\n\n    case 'zero_or_more':\n      // expression *\n      return rd.ZeroOrMore(diagram(expr.expression));\n\n    case 'one_or_more':\n      // expression +\n      return rd.OneOrMore(diagram(expr.expression));\n\n    case 'rule_ref':\n      // rule\n      return rd.NonTerminal(expr.name);\n\n    case 'literal':\n      // 'literal'\n      return rd.Terminal(whitescape(expr.value));\n\n    case 'class':\n      // [characters]\n      return rd.Terminal(expr.rawText);\n    \n    case 'any':\n      // wildcard\n      // .\n      return rd.Terminal('[any character]');\n\n    case 'simple_and':\n      // lookahead\n      // & expression\n      return diagram(expr.expression);\n    \n    case 'simple_not':\n      // negative lookahead\n      // ! expression\n      return rd.Optional(rd.Sequence(rd.End(), diagram(expr.expression)), 'skip');\n\n    case 'semantic_and':\n      // predicate lookahead\n      // & { predicate }\n      return rd.Terminal('[match:' + expr.code + ']');\n      \n    case 'semantic_not':\n      // negative predicate lookahead\n      // ! { predicate }\n      return diagram({\n        type: 'simple_not',\n        expression: {type: 'class', rawText: '[match:' + expr.code + ']'}\n      });\n  }\n  var msg = 'Unknown expression:' + expr.type;\n  console.log(msg, expr);\n  return rd.Terminal(msg);\n};\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/peg-rd.js\n ** module id = 97\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/peg-rd.js?")},
+/* module id:  97 */
+function(module,exports,__webpack_require__){eval(`
+var rd              = __webpack_require__(54);
+var whitescape      = __webpack_require__(182);
+
+var rdAst           = {};
+var methods         = Object.keys(rd).concat(["Start", "End"]);
+methods.forEach(function(type) {
+  rdAst[type] = function() {
+    return {
+      type: type,
+      arguments: [].slice.call(arguments)
+    };
+  }
+});
+rd = rdAst;
+
+module.exports = function diagram(expr) 
+{
+    /**
+     * If the given string is longer than a certain amount of characters, shorten it
+     */
+    var UnLengthen = function (str)
+    {
+        var kNCharsMax  = 60;
+        
+        var nChars;
+        var nCharsNew;
+        var ret;
+        
+        nChars = str.length;
+        if (nChars > kNCharsMax)
+        {
+            nCharsNew = kNCharsMax - 1;
+            ret  = "   ";
+            ret += str.slice (0, nCharsNew);
+            ret += " ...   ";
+        }
+        else
+        {
+            ret = "   " + str + "   ";
+        }
+        
+        return ret;
+    };
+    
+    var subDiagr;
+    var sequence;
+    var text;
+    var whtScape;
+    var endMark;
+    var msg;
+    var ret;
+    
+    switch (expr.type) 
+    {
+        case "rule":
+            // rules = expression
+            subDiagr  = diagram (expr.expression);
+            ret       = rd.Diagram (subDiagr);
+            break;
+        case "text":
+            // $expression
+            ret = diagram (expr.expression);
+            break;
+        case "labeled":
+            // label : expression
+            ret = diagram (expr.expression);
+            break;
+        case "named":
+            // rule \"name\" = expression
+            ret = diagram (expr.expression);
+            break;
+        case "action":
+            // expression {action}
+            ret = diagram (expr.expression);
+            break;
+        case "sequence":
+            // expression1 expression2 ...
+            sequence = expr.elements.map (diagram);
+            ret      = rd.Sequence.apply (null, sequence);
+            break;
+        case "choice":
+            // expression1 / expression2 / ...
+            sequence = expr.alternatives.map (diagram);
+            sequence.unshift (0);
+            ret     = rd.Choice.apply (null, x);
+            break;
+        case "optional":
+            // expression ?
+            subDiagr = diagram (expr.expression);
+            ret      = rd.Optional (subDiagr);
+            break;
+        case "zero_or_more":
+            // expression *
+            subDiagr = diagram (expr.expression);
+            ret      = rd.ZeroOrMore (subDiagr);
+            break; 
+        case "one_or_more":
+            // expression +
+            subDiagr = diagram (expr.expression);
+            ret      = rd.OneOrMore (subDiagr);
+            break; 
+        case "rule_ref":
+            // rule
+            ret = rd.NonTerminal (expr.name);
+            break;
+        case "literal":
+            // "literal"
+            whtScape = whitescape (expr.value);
+            text     = UnLengthen (whtScape);
+            ret      = rd.Terminal (text);
+            break;
+        case "class":
+            // [characters]
+            text = UnLengthen (expr.rawText);
+            ret  = rd.Terminal (text);
+            break;
+        case "any":
+            // wildcard
+            // .
+            ret = rd.Terminal("[any character]");
+            break;
+        case "simple_and":
+            // lookahead
+            // & expression
+            ret = diagram (expr.expression);
+            break;
+        case "simple_not":
+            // negative lookahead
+            // ! expression
+            endMark  = rd.End ();
+            subDiagr = diagram (expr.expression);
+            sequence = rd.Sequence (endMark, subDiagr);
+            ret      = rd.Optional (sequence, "skip");
+            break;
+        case "semantic_and":
+            // predicate lookahead
+            // & { predicate }
+            text = 
+            ret  = rd.Terminal ("[match:" + expr.code + "]");
+            break;
+        case "semantic_not":
+            // negative predicate lookahead
+            // ! { predicate }
+            text = UnLengthen (expr.code);
+            ret  = diagram
+            (
+                {
+                    type:           "simple_not",
+                    expression: 
+                    {
+                        type:       "class", 
+                        rawText:    "[match:" + text + "]"
+                    }
+                }
+            );
+            break;
+        default:
+            msg = "Unknown expression:" + expr.type;            
+            ret = rd.Terminal (msg);
+            console.log (msg);
+            console.log (expr);
+    }
+    
+    return ret;
+};
+
+
+/*****************
+ ** WEBPACK FOOTER
+ ** ./lib/peg-rd.js
+ ** module id = 97
+ ** module chunks = 0
+ **/
+//# sourceURL=webpack:///./lib/peg-rd.js?
+`
+)},
 /* module id:  98 */ function(module,exports,__webpack_require__){eval('var utils = __webpack_require__(53);\n\nmodule.exports = function(ast) {\n  function nop() {}\n\n  function checkExpression(node) { check(node.expression); }\n\n  function checkSubnodes(propertyName) {\n    return function(node) { utils.each(node[propertyName], check); };\n  }\n\n  var check = utils.buildNodeVisitor({\n    grammar:      checkSubnodes("rules"),\n    rule:         checkExpression,\n    named:        checkExpression,\n    choice:       checkSubnodes("alternatives"),\n    action:       checkExpression,\n    sequence:     checkSubnodes("elements"),\n    labeled:      checkExpression,\n    text:         checkExpression,\n    simple_and:   checkExpression,\n    simple_not:   checkExpression,\n    semantic_and: nop,\n    semantic_not: nop,\n    optional:     checkExpression,\n    zero_or_more: checkExpression,\n    one_or_more:  checkExpression,\n\n    rule_ref:\n      function(node) {\n        var refRule = rules[ruleName] = rules[ruleName] || {references: {}, usedBy: {}};\n        refRule.references[node.name] = true;\n        var usedRule = rules[node.name] = rules[node.name] || {references: {}, usedBy: {}};\n        usedRule.usedBy[ruleName] = true;\n      },\n\n    literal:      nop,\n    "class":      nop,\n    any:          nop\n  });\n\n  var rules = {};\n  var ruleName;\n  if (ast.rules) {\n    ast.rules.forEach(function(rule) {\n      ruleName = rule.name;\n      check(rule);\n    });\n    for (var name in rules) {\n      rules[name] = {\n        references: Object.keys(rules[name].references),\n        usedBy: Object.keys(rules[name].usedBy)\n      };\n    }\n  }\n  return rules;\n};\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/peg-references.js\n ** module id = 98\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/peg-references.js?')},
 /* module id:  99 */ function(module,exports,__webpack_require__){eval("var _ = __webpack_require__(101);\n\nmodule.exports = function traverse(node) {\n  if (node.type === 'Sequence') {\n    var args = node.arguments.map(traverse);\n    for (var i = 0; i < args.length; i += 1) {\n      var n = args[i];\n      if (n.type === 'ZeroOrMore' && n.arguments.length === 1 && n.arguments[0].type === 'Sequence') {\n        var innerSeq = n.arguments[0].arguments.slice();\n        var outerSeq = args.slice(0, i);\n        var common = [];\n        while (innerSeq.length && outerSeq.length) {\n          var el;\n          if (_.isEqual(innerSeq[innerSeq.length-1], outerSeq[outerSeq.length-1])) {\n            common.unshift(innerSeq.pop());\n            outerSeq.pop();\n          } else {\n            break;\n          }\n        }\n        if (common.length) {\n          args = outerSeq.concat([{\n            type: 'OneOrMore',\n            arguments: [{\n              type: 'Sequence',\n              arguments: common\n            }, {\n              type: 'Sequence',\n              arguments: innerSeq.reverse()\n            }]\n          }], args.slice(i+1));\n        }\n      }\n    }\n    \n    return {\n      type: node.type,\n      arguments: args\n    };\n  }\n  \n  if (node.arguments && node.arguments.length) {\n    return {\n      type: node.type,\n      arguments: node.arguments.map(traverse)\n    }\n  }\n  return node;\n}\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/rd-optimize-loops.js\n ** module id = 99\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/rd-optimize-loops.js?")},
 /* module id: 100 */ function(module,exports,__webpack_require__){eval("var rd = __webpack_require__(54);\n\nvar extra = {\n  Start: function() {\n    return rd.Diagram().items[0];\n  },\n  End: function() {\n    return rd.Diagram().items[1];\n  }\n};\n\nfunction compile(expr) {\n  var args = expr.arguments ? expr.arguments.map(compile) : [];\n  if (expr.type) {\n    var method = extra[expr.type] || rd[expr.type];\n    return method.apply(null, args);\n  }\n  return expr;\n}\n\nmodule.exports = function(expr) {\n  return compile(expr).toString();\n};\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/rd-string.js\n ** module id = 100\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/rd-string.js?")},

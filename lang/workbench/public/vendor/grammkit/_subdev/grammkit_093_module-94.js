@@ -57,6 +57,21 @@ var App = React.createClass
          */
         render: function ()
         {
+            var kStyleLink =
+            {   /* [110] */
+                marginRight:        "1em"
+            };
+            var kStyleLinkList =
+            {   /* [110] */
+                fontSize:           "small",
+                color:              "gray",
+                marginLeft:         "1em",
+                marginRight:        "1em",
+                marginBottom:       "0.5em",
+                wordWrap:           "break-word",
+                wordBreak:          "normal"
+            }
+
             var hasError;
             var hasRules;
             var err;
@@ -165,13 +180,8 @@ var App = React.createClass
                             (
                                 "a",
                                 {
-                                    href: link,
-                                    style:
-                                    {   /* [110] */
-                                        fontSize:           "small",
-                                        color:              "gray",
-                                        marginLeft:         "1em"
-                                    }
+                                    href:   link,
+                                    style:  kStyleLink
                                 },
                                 x
                             );
@@ -180,10 +190,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom: "0.5em"
-                                }
+                                style:      kStyleLinkList
                             },
                             anchors
                         );
@@ -194,13 +201,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom:       "0.5em",
-                                    marginLeft:         "1em",
-                                    fontSize:           "small",
-                                    color:              "gray"
-                                }
+                                style:      kStyleLinkList
                             },
                             "No reference to other rules"
                         )
@@ -219,13 +220,8 @@ var App = React.createClass
                             (
                                 "a",
                                 {
-                                    href: link,
-                                    style:
-                                    {   /* [110] */
-                                        fontSize:           "small",
-                                        color:              "gray",
-                                        marginLeft:         "0.5em"
-                                    }
+                                    href:   link,
+                                    style:  kStyleLink
                                 },
                                 x
                             );
@@ -234,10 +230,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom: "0.1em"
-                                }
+                                style:      kStyleLinkList
                             },
                             anchors
                         );
@@ -248,13 +241,7 @@ var App = React.createClass
                         (
                             "div",
                             {
-                                style:
-                                {   /* [110] */
-                                    marginBottom:       "0.1em",
-                                    marginLeft:         "1em",
-                                    fontSize:           "small",
-                                    color:              "gray"
-                                }
+                                style:      kStyleLinkList
                             },
                             "Not used by other rules"
                         )
@@ -301,7 +288,10 @@ var App = React.createClass
             // if the node was clicked then go to rule definition
             if (ev.target.tagName === "text")
             {
-                location.hash = ev.target.textContent;
+                var link;
+                
+                link          = ev.target.textContent.trim ();
+                location.hash = link;
             }
         },
 
@@ -430,6 +420,7 @@ var App = React.createClass
             var refs;
             var usedBys;
             var iRef;
+            var svg;
 
             if (this.grammar.ast !== null)
             {
@@ -443,6 +434,7 @@ var App = React.createClass
                         rule    = this.grammar.ast.rules [iRule];
                         refs    = [];
                         usedBys = [];
+                        svg     = diagram (rule);
                         if (typeof references[rule.name] != 'undefined')
                         {
                             refs0       = references[rule.name].references;
@@ -468,7 +460,7 @@ var App = React.createClass
                         rules[iRule] =
                         {
                             name:           rule.name,
-                            diagram:        diagram (rule),
+                            diagram:        svg,
                             references:     refs,
                             usedBys:        usedBys
                         };
