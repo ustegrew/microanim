@@ -82,14 +82,12 @@ var App = React.createClass
             };
             var kStyleMain =
             {   /* Main panel containing all the diagram tiles */
-                backgroundColor:    "#F5F3F0",              /* [120] */
-                border:             "2px solid silver",
+                border:             "1px solid silver",
                 borderRadius:       "8px",
                 padding:            "8px"
             };
             var kStyleTOC =
             {   /* LH Table of contents */
-                backgroundColor:    "#F5F3F0",              /* [120] */
                 border:             "2px solid silver",
                 borderRadius:       "8px",
                 color:              "gray",
@@ -106,7 +104,8 @@ var App = React.createClass
             };
             var kStyleTile =
             {   /* Tile for each rule diagram  */
-                border:             "2px silver solid",
+                backgroundColor:    "#F5F3F0",              /* [120] */
+                border:             "2px solid silver",
                 borderRadius:       "8px",
                 boxSizing:          "border-box",
                 marginBottom:       "0.8em",
