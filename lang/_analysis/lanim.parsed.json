@@ -1,0 +1,2097 @@
+{
+   "type": "grammar",
+   "initializer": undefined,
+   "rules": [
+      {
+         "type": "rule",
+         "name": "start",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "rule_ref",
+               "name": "Program"
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Program",
+         "expression": {
+            "type": "sequence",
+            "elements": [
+               {
+                  "type": "zero_or_more",
+                  "expression": {
+                     "type": "rule_ref",
+                     "name": "Declaration"
+                  }
+               },
+               {
+                  "type": "zero_or_more",
+                  "expression": {
+                     "type": "choice",
+                     "alternatives": [
+                        {
+                           "type": "rule_ref",
+                           "name": "DebugPushStatement"
+                        },
+                        {
+                           "type": "rule_ref",
+                           "name": "Expression"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "DebugPushStatement",
+         "expression": {
+            "type": "named",
+            "name": "Dbg_PushDump",
+            "expression": {
+               "type": "action",
+               "expression": {
+                  "type": "sequence",
+                  "elements": [
+                     {
+                        "type": "rule_ref",
+                        "name": "Tok_DbgPushDump"
+                     },
+                     {
+                        "type": "rule_ref",
+                        "name": "_"
+                     },
+                     {
+                        "type": "labeled",
+                        "label": "msg",
+                        "expression": {
+                           "type": "rule_ref",
+                           "name": "L_String"
+                        }
+                     },
+                     {
+                        "type": "rule_ref",
+                        "name": "EOL"
+                     }
+                  ]
+               }
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Declaration",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "Tok_Declare"
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "id",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Identifier"
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_EOL"
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Expression",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "lh_assignee",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Variable_LH"
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "literal",
+                     "value": "=",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "rh_term",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Tree"
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_EOL"
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Tree",
+         "expression": {
+            "type": "rule_ref",
+            "name": "Term_Numeric_Additive"
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Numeric_Additive",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "labeled",
+                     "label": "head",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Multiplicative"
+                     }
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "tail",
+                     "expression": {
+                        "type": "zero_or_more",
+                        "expression": {
+                           "type": "group",
+                           "expression": {
+                              "type": "sequence",
+                              "elements": [
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "choice",
+                                    "alternatives": [
+                                       {
+                                          "type": "rule_ref",
+                                          "name": "Op_Add"
+                                       },
+                                       {
+                                          "type": "rule_ref",
+                                          "name": "Op_Subtract"
+                                       }
+                                    ]
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "Term_Numeric_Multiplicative"
+                                 }
+                              ]
+                           }
+                        }
+                     }
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Numeric_Multiplicative",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "labeled",
+                     "label": "head",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Power"
+                     }
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "tail",
+                     "expression": {
+                        "type": "zero_or_more",
+                        "expression": {
+                           "type": "group",
+                           "expression": {
+                              "type": "sequence",
+                              "elements": [
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "choice",
+                                    "alternatives": [
+                                       {
+                                          "type": "rule_ref",
+                                          "name": "Op_Multiply"
+                                       },
+                                       {
+                                          "type": "rule_ref",
+                                          "name": "Op_Divide"
+                                       }
+                                    ]
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "Term_Numeric_Power"
+                                 }
+                              ]
+                           }
+                        }
+                     }
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Numeric_Power",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "labeled",
+                     "label": "head",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Exp_Signed"
+                     }
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "tail",
+                     "expression": {
+                        "type": "optional",
+                        "expression": {
+                           "type": "group",
+                           "expression": {
+                              "type": "sequence",
+                              "elements": [
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "Op_PowerTo"
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "Term_Numeric_Power"
+                                 }
+                              ]
+                           }
+                        }
+                     }
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Numeric_Exp_Signed",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "labeled",
+                     "label": "sign",
+                     "expression": {
+                        "type": "optional",
+                        "expression": {
+                           "type": "choice",
+                           "alternatives": [
+                              {
+                                 "type": "rule_ref",
+                                 "name": "Op_UnaryPositive"
+                              },
+                              {
+                                 "type": "rule_ref",
+                                 "name": "Op_UnaryNegative"
+                              }
+                           ]
+                        }
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Exp"
+                     }
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Numeric_Exp",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Math"
+                     }
+                  }
+               },
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Bracketed"
+                     }
+                  }
+               },
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "L_Number_Constant"
+                     }
+                  }
+               },
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Variable_RH"
+                     }
+                  }
+               },
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "L_Number"
+                     }
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Numeric_Math",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "labeled",
+                     "label": "func",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Tok_Math"
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "literal",
+                     "value": "(",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Additive"
+                     }
+                  },
+                  {
+                     "type": "literal",
+                     "value": ")",
+                     "ignoreCase": false
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Term_Numeric_Bracketed",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "literal",
+                     "value": "(",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "value",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "Term_Numeric_Additive"
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "_"
+                  },
+                  {
+                     "type": "literal",
+                     "value": ")",
+                     "ignoreCase": false
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Variable_LH",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "labeled",
+               "label": "id",
+               "expression": {
+                  "type": "rule_ref",
+                  "name": "Identifier"
+               }
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Variable_RH",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "labeled",
+               "label": "id",
+               "expression": {
+                  "type": "rule_ref",
+                  "name": "Identifier"
+               }
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Identifier",
+         "expression": {
+            "type": "named",
+            "name": "identifier",
+            "expression": {
+               "type": "action",
+               "expression": {
+                  "type": "sequence",
+                  "elements": [
+                     {
+                        "type": "simple_not",
+                        "expression": {
+                           "type": "rule_ref",
+                           "name": "Keyword"
+                        }
+                     },
+                     {
+                        "type": "labeled",
+                        "label": "head",
+                        "expression": {
+                           "type": "class",
+                           "parts": "[[\"a\",\"z\"],[\"A\",\"Z\"],\"_\"]",
+                           "inverted": false,
+                           "ignoreCase": false
+                        }
+                     },
+                     {
+                        "type": "labeled",
+                        "label": "tail",
+                        "expression": {
+                           "type": "zero_or_more",
+                           "expression": {
+                              "type": "class",
+                              "parts": "[[\"a\",\"z\"],[\"A\",\"Z\"],[\"0\",\"9\"],\"_\"]",
+                              "inverted": false,
+                              "ignoreCase": false
+                           }
+                        }
+                     }
+                  ]
+               }
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Comment",
+         "expression": {
+            "type": "named",
+            "name": "comment",
+            "expression": {
+               "type": "choice",
+               "alternatives": [
+                  {
+                     "type": "rule_ref",
+                     "name": "MultiLineComment"
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "SingleLineComment"
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "MultiLineComment",
+         "expression": {
+            "type": "sequence",
+            "elements": [
+               {
+                  "type": "literal",
+                  "value": "/*",
+                  "ignoreCase": false
+               },
+               {
+                  "type": "zero_or_more",
+                  "expression": {
+                     "type": "group",
+                     "expression": {
+                        "type": "sequence",
+                        "elements": [
+                           {
+                              "type": "simple_not",
+                              "expression": {
+                                 "type": "literal",
+                                 "value": "*/",
+                                 "ignoreCase": false
+                              }
+                           },
+                           {
+                              "type": "rule_ref",
+                              "name": "SourceCharacter"
+                           }
+                        ]
+                     }
+                  }
+               },
+               {
+                  "type": "literal",
+                  "value": "*/",
+                  "ignoreCase": false
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "SingleLineComment",
+         "expression": {
+            "type": "sequence",
+            "elements": [
+               {
+                  "type": "literal",
+                  "value": "//",
+                  "ignoreCase": false
+               },
+               {
+                  "type": "zero_or_more",
+                  "expression": {
+                     "type": "group",
+                     "expression": {
+                        "type": "sequence",
+                        "elements": [
+                           {
+                              "type": "simple_not",
+                              "expression": {
+                                 "type": "rule_ref",
+                                 "name": "EOL"
+                              }
+                           },
+                           {
+                              "type": "rule_ref",
+                              "name": "SourceCharacter"
+                           }
+                        ]
+                     }
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Keyword",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Abs"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Cos"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_DbgPushDump"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Declare"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Else"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Exp"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_For"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Function"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_If"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_While"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_GetSize"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_LoadImg"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Log"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_MoveBy"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_MoveTo"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_PopFirst"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_PopLast"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_PushFirst"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_PushLast"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Reset"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Return"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_RotateBy"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_RotateTo"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_SetTransparency"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Sin"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Sqrt"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_StepBack"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_StepForward"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Tan"
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Declare",
+         "expression": {
+            "type": "literal",
+            "value": "declare",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Else",
+         "expression": {
+            "type": "literal",
+            "value": "else",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_For",
+         "expression": {
+            "type": "literal",
+            "value": "for",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Function",
+         "expression": {
+            "type": "literal",
+            "value": "function",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_If",
+         "expression": {
+            "type": "literal",
+            "value": "if",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Return",
+         "expression": {
+            "type": "literal",
+            "value": "return",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_While",
+         "expression": {
+            "type": "literal",
+            "value": "while",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Math",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Abs"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Sqrt"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Log"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Exp"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Sin"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Cos"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "Tok_Tan"
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Abs",
+         "expression": {
+            "type": "literal",
+            "value": "abs",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Sqrt",
+         "expression": {
+            "type": "literal",
+            "value": "sqrt",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Log",
+         "expression": {
+            "type": "literal",
+            "value": "log",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Exp",
+         "expression": {
+            "type": "literal",
+            "value": "exp",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Sin",
+         "expression": {
+            "type": "literal",
+            "value": "sin",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Cos",
+         "expression": {
+            "type": "literal",
+            "value": "cos",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Tan",
+         "expression": {
+            "type": "literal",
+            "value": "tan",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_GetSize",
+         "expression": {
+            "type": "literal",
+            "value": "GetSize",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_LoadImg",
+         "expression": {
+            "type": "literal",
+            "value": "LoadImg",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_MoveBy",
+         "expression": {
+            "type": "literal",
+            "value": "MoveBy",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_MoveTo",
+         "expression": {
+            "type": "literal",
+            "value": "MoveTo",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_PopFirst",
+         "expression": {
+            "type": "literal",
+            "value": "PopFirst",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_PopLast",
+         "expression": {
+            "type": "literal",
+            "value": "PopLast",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_PushFirst",
+         "expression": {
+            "type": "literal",
+            "value": "PushFirst",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_PushLast",
+         "expression": {
+            "type": "literal",
+            "value": "PushLast",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_Reset",
+         "expression": {
+            "type": "literal",
+            "value": "Reset",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_RotateBy",
+         "expression": {
+            "type": "literal",
+            "value": "RotateBy",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_RotateTo",
+         "expression": {
+            "type": "literal",
+            "value": "RotateTo",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_SetTransparency",
+         "expression": {
+            "type": "literal",
+            "value": "SetTransparency",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_StepBack",
+         "expression": {
+            "type": "literal",
+            "value": "StepBack",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_StepForward",
+         "expression": {
+            "type": "literal",
+            "value": "StepForward",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Tok_DbgPushDump",
+         "expression": {
+            "type": "literal",
+            "value": "Dbg_PushDump",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "SourceCharacter",
+         "expression": {
+            "type": "any"
+         }
+      },
+      {
+         "type": "rule",
+         "name": "WhiteSpace",
+         "expression": {
+            "type": "named",
+            "name": "whitespace-char",
+            "expression": {
+               "type": "choice",
+               "alternatives": [
+                  {
+                     "type": "literal",
+                     "value": " ",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "literal",
+                     "value": "",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "literal",
+                     "value": "",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "literal",
+                     "value": " ",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "literal",
+                     "value": " ",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "literal",
+                     "value": "﻿",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "Zs"
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "EOL",
+         "expression": {
+            "type": "named",
+            "name": "end-of-line",
+            "expression": {
+               "type": "class",
+               "parts": "[\"\n\",\"\r\",\"\",\" \"]",
+               "inverted": false,
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "_EOL",
+         "expression": {
+            "type": "named",
+            "name": "whitespace_then_eol",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "zero_or_more",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "WhiteSpace"
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "EOL"
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "_",
+         "expression": {
+            "type": "named",
+            "name": "whitespace",
+            "expression": {
+               "type": "zero_or_more",
+               "expression": {
+                  "type": "rule_ref",
+                  "name": "WhiteSpace"
+               }
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "__",
+         "expression": {
+            "type": "named",
+            "name": "whitespace_or_eol",
+            "expression": {
+               "type": "zero_or_more",
+               "expression": {
+                  "type": "choice",
+                  "alternatives": [
+                     {
+                        "type": "rule_ref",
+                        "name": "WhiteSpace"
+                     },
+                     {
+                        "type": "rule_ref",
+                        "name": "EOL"
+                     }
+                  ]
+               }
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "_EOL",
+         "expression": {
+            "type": "named",
+            "name": "whitespace_then_eol",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "zero_or_more",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "WhiteSpace"
+                     }
+                  },
+                  {
+                     "type": "rule_ref",
+                     "name": "EOL"
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "EscNl",
+         "expression": {
+            "type": "named",
+            "name": "EscEOL",
+            "expression": {
+               "type": "literal",
+               "value": "\n",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "EscDQuot",
+         "expression": {
+            "type": "named",
+            "name": "EscDblQuot",
+            "expression": {
+               "type": "literal",
+               "value": "\\\"",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "EscBackslash",
+         "expression": {
+            "type": "named",
+            "name": "EscBackslash",
+            "expression": {
+               "type": "literal",
+               "value": "\\",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Number",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "rule_ref",
+                  "name": "L_Hex"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_Bin"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_Decimal"
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Scalar",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "rule_ref",
+                  "name": "L_Decimal"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_Hex"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_Bin"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_String"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_Boolean"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_Null"
+               },
+               {
+                  "type": "rule_ref",
+                  "name": "L_Number_Constant"
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Array",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "literal",
+                     "value": "[",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "head",
+                     "expression": {
+                        "type": "rule_ref",
+                        "name": "L_Scalar"
+                     }
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "tail",
+                     "expression": {
+                        "type": "zero_or_more",
+                        "expression": {
+                           "type": "group",
+                           "expression": {
+                              "type": "sequence",
+                              "elements": [
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "literal",
+                                    "value": ",",
+                                    "ignoreCase": false
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "L_Scalar"
+                                 },
+                                 {
+                                    "type": "rule_ref",
+                                    "name": "_"
+                                 }
+                              ]
+                           }
+                        }
+                     }
+                  },
+                  {
+                     "type": "literal",
+                     "value": "]",
+                     "ignoreCase": false
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Decimal",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "sequence",
+                     "elements": [
+                        {
+                           "type": "labeled",
+                           "label": "l0",
+                           "expression": {
+                              "type": "zero_or_more",
+                              "expression": {
+                                 "type": "class",
+                                 "parts": "[[\"0\",\"9\"]]",
+                                 "inverted": false,
+                                 "ignoreCase": false
+                              }
+                           }
+                        },
+                        {
+                           "type": "labeled",
+                           "label": "l1",
+                           "expression": {
+                              "type": "class",
+                              "parts": "[\".\"]",
+                              "inverted": false,
+                              "ignoreCase": false
+                           }
+                        },
+                        {
+                           "type": "labeled",
+                           "label": "l2",
+                           "expression": {
+                              "type": "one_or_more",
+                              "expression": {
+                                 "type": "class",
+                                 "parts": "[[\"0\",\"9\"]]",
+                                 "inverted": false,
+                                 "ignoreCase": false
+                              }
+                           }
+                        }
+                     ]
+                  }
+               },
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "l0",
+                     "expression": {
+                        "type": "one_or_more",
+                        "expression": {
+                           "type": "class",
+                           "parts": "[[\"0\",\"9\"]]",
+                           "inverted": false,
+                           "ignoreCase": false
+                        }
+                     }
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Hex",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "literal",
+                     "value": "0x",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "l0",
+                     "expression": {
+                        "type": "one_or_more",
+                        "expression": {
+                           "type": "class",
+                           "parts": "[[\"0\",\"9\"],[\"a\",\"f\"],[\"A\",\"F\"]]",
+                           "inverted": false,
+                           "ignoreCase": false
+                        }
+                     }
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Bin",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "literal",
+                     "value": "0b",
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "l0",
+                     "expression": {
+                        "type": "one_or_more",
+                        "expression": {
+                           "type": "class",
+                           "parts": "[\"0\",\"1\"]",
+                           "inverted": false,
+                           "ignoreCase": false
+                        }
+                     }
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_String",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "sequence",
+               "elements": [
+                  {
+                     "type": "class",
+                     "parts": "[\"\\"\"]",
+                     "inverted": false,
+                     "ignoreCase": false
+                  },
+                  {
+                     "type": "labeled",
+                     "label": "l0",
+                     "expression": {
+                        "type": "zero_or_more",
+                        "expression": {
+                           "type": "choice",
+                           "alternatives": [
+                              {
+                                 "type": "rule_ref",
+                                 "name": "Ll"
+                              },
+                              {
+                                 "type": "rule_ref",
+                                 "name": "Lu"
+                              },
+                              {
+                                 "type": "rule_ref",
+                                 "name": "Nd"
+                              },
+                              {
+                                 "type": "rule_ref",
+                                 "name": "Pc"
+                              },
+                              {
+                                 "type": "rule_ref",
+                                 "name": "Zs"
+                              }
+                           ]
+                        }
+                     }
+                  },
+                  {
+                     "type": "class",
+                     "parts": "[\"\\"\"]",
+                     "inverted": false,
+                     "ignoreCase": false
+                  }
+               ]
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Boolean",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "literal",
+                     "value": "true",
+                     "ignoreCase": false
+                  }
+               },
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "literal",
+                     "value": "false",
+                     "ignoreCase": false
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Null",
+         "expression": {
+            "type": "action",
+            "expression": {
+               "type": "literal",
+               "value": "null",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "L_Number_Constant",
+         "expression": {
+            "type": "choice",
+            "alternatives": [
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "n",
+                     "expression": {
+                        "type": "literal",
+                        "value": "_e",
+                        "ignoreCase": false
+                     }
+                  }
+               },
+               {
+                  "type": "action",
+                  "expression": {
+                     "type": "labeled",
+                     "label": "n",
+                     "expression": {
+                        "type": "literal",
+                        "value": "_pi",
+                        "ignoreCase": false
+                     }
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_Add",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "+",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_Subtract",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "-",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_BitwiseAND",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "&",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_BitwiseOR",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "|",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_BitwiseShiftL",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "<<",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_BitwiseShiftR",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": ">>",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_BitwiseShiftRFillZero",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": ">>>",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_BitwiseXOR",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "^",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_Equal",
+         "expression": {
+            "type": "literal",
+            "value": "==",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_Divide",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "/",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_EqualStrict",
+         "expression": {
+            "type": "literal",
+            "value": "===",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_EqualNot",
+         "expression": {
+            "type": "literal",
+            "value": "!=",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_EqualNotStrict",
+         "expression": {
+            "type": "literal",
+            "value": "!==",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_GreaterThan",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": ">",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_GreaterThanOrEqualTo",
+         "expression": {
+            "type": "literal",
+            "value": ">=",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_LogicalAND",
+         "expression": {
+            "type": "literal",
+            "value": "&&",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_LogicalOR",
+         "expression": {
+            "type": "literal",
+            "value": "||",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_Modulo",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "%",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_Multiply",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "*",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_PowerTo",
+         "expression": {
+            "type": "literal",
+            "value": "**",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_SmallerThan",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "<",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_SmallerThanOrEqualTo",
+         "expression": {
+            "type": "literal",
+            "value": "<=",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_UnaryPositive",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "+",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_UnaryNegative",
+         "expression": {
+            "type": "text",
+            "expression": {
+               "type": "literal",
+               "value": "-",
+               "ignoreCase": false
+            }
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_UnaryBinaryNOT",
+         "expression": {
+            "type": "literal",
+            "value": "~",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Op_UnaryLogicalNOT",
+         "expression": {
+            "type": "literal",
+            "value": "!",
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Ll",
+         "expression": {
+            "type": "class",
+            "parts": "[[\"a\",\"z\"],\"µ\",[\"ß\",\"ö\"],[\"ø\",\"ÿ\"],\"ā\"]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Lm",
+         "expression": {
+            "type": "class",
+            "parts": "[[\"ʰ\",\"ˁ\"],[\"ˆ\",\"ˑ\"],[\"ˠ\",\"ˤ\"],\"ˬ\",\"ˮ\"]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Lo",
+         "expression": {
+            "type": "class",
+            "parts": "[\"ª\",\"º\",\"ƻ\",[\"ǀ\",\"ǃ\"],\"ʔ\"]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Lt",
+         "expression": {
+            "type": "class",
+            "parts": "[\"ǅ\",\"ǈ\",\"ǋ\",\"ǲ\",[\"ᾈ\",\"ᾏ\"]]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Lu",
+         "expression": {
+            "type": "class",
+            "parts": "[[\"A\",\"Z\"],[\"À\",\"Ö\"],[\"Ø\",\"Þ\"],\"Ā\",\"Ă\"]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Mc",
+         "expression": {
+            "type": "class",
+            "parts": "[\"ः\",\"ऻ\",[\"ा\",\"ी\"],[\"ॉ\",\"ौ\"],[\"ॎ\",\"ॏ\"]]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Mn",
+         "expression": {
+            "type": "class",
+            "parts": "[[\"̀\",\"ͯ\"],[\"҃\",\"҇\"],[\"֑\",\"ֽ\"],\"ֿ\",[\"ׁ\",\"ׂ\"]]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Nd",
+         "expression": {
+            "type": "class",
+            "parts": "[[\"0\",\"9\"],[\"٠\",\"٩\"],[\"۰\",\"۹\"],[\"߀\",\"߉\"],[\"०\",\"९\"]]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Nl",
+         "expression": {
+            "type": "class",
+            "parts": "[[\"ᛮ\",\"ᛰ\"],[\"Ⅰ\",\"ↂ\"],[\"ↅ\",\"ↈ\"],\"〇\",[\"〡\",\"〩\"]]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Pc",
+         "expression": {
+            "type": "class",
+            "parts": "[\"_\",[\"‿\",\"⁀\"],\"⁔\",[\"︳\",\"︴\"],[\"﹍\",\"﹏\"]]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      },
+      {
+         "type": "rule",
+         "name": "Zs",
+         "expression": {
+            "type": "class",
+            "parts": "[\" \",\" \",\" \",[\" \",\" \"],\" \"]",
+            "inverted": false,
+            "ignoreCase": false
+         }
+      }
+   ]
+}

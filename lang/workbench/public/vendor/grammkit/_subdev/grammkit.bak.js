@@ -146,11 +146,13 @@
 /* module id:  93 */ function(module,exports,__webpack_require__){eval('module.exports = [\n	{\n		"name": "Arithmetic",\n		"source": "start\\n    = additive\\n\\n  additive\\n    = left:multiplicative \\"+\\" right:additive { return left + right; }\\n    / multiplicative\\n\\n  multiplicative\\n    = left:primary \\"*\\" right:multiplicative { return left * right; }\\n    / primary\\n\\n  primary\\n    = integer\\n    / \\"(\\" additive:additive \\")\\" { return additive; }\\n\\n  integer \\"integer\\"\\n    = digits:[0-9]+ { return parseInt(digits.join(\\"\\"), 10); }"\n	},\n	{\n		"name": "SPARQL",\n		"link": "./examples/sparql.ebnf"\n	},\n	{\n		"name": "ArchieML",\n		"link": "https://cdn.rawgit.com/dundalek/archieml-peg/6d882f42de57d850f72772cde9aadc7a4ee579bf/aml.parser.pegjs"\n	},\n	{\n		"name": "JSON",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/fb5f6c6ee94b962c45f591f64b293bc11ba57ae6/examples/json.pegjs"\n	},\n	{\n		"name": "URI",\n		"link": "https://cdn.rawgit.com/for-GET/core-pegjs/e34d41427da15290c03b5adcea13b4f50953e410/src/ietf/rfc3986-uri.pegjs"\n	},\n	{\n		"name": "XPath",\n		"link": "https://cdn.rawgit.com/for-GET/core-pegjs/975eac813d2418a492af2e48e9cbb590ba2cf6e3/src/w3c/xpath.pegjs"\n	},\n	{\n		"name": "ABNF",\n		"link": "https://raw.githubusercontent.com/for-GET/core-pegjs/f983ef4d75f442bd4405319c981f1cd05f7136a4/src/ietf/rfc5234-abnf.pegjs"\n	},\n	{\n		"name": "CSS",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/200534597620cc818b9cd24b032c661fd770e138/examples/css.pegjs"\n	},\n	{\n		"name": "JavaScript",\n		"link": "https://cdn.rawgit.com/pegjs/pegjs/c13cc882626a245a7a5a97af036f95e40e50a2c7/examples/javascript.pegjs"\n	}\n]\n\n/*****************\n ** WEBPACK FOOTER\n ** ./app/examples.json\n ** module id = 93\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./app/examples.json?')},
 /* module id:  94 */
 function (module,exports,__webpack_require__){eval(`
-var React           = __webpack_require__(104);
-var cx              = __webpack_require__(90);
-var parse           = __webpack_require__(103).parse;
-var diagram         = __webpack_require__(96);
-var getReferences   = __webpack_require__(98);
+var React               = __webpack_require__(104);
+var cx                  = __webpack_require__(90);
+var parse               = __webpack_require__(103).parse;
+var diagram             = __webpack_require__(96);
+var getReferences       = __webpack_require__(98);
+
+var kDbgDoPrintTree    = true;
 
 var App = React.createClass
 (
@@ -234,7 +236,7 @@ var App = React.createClass
             };
             var kStyleTOC =
             {   /* LH Table of contents */
-                border:             "1px solid silver",
+                border:             "2px solid silver",
                 borderRadius:       "8px",
                 color:              "gray",
                 display:            "inline-block",
@@ -644,7 +646,7 @@ var App = React.createClass
                         synErr.eType        = "syn";
                     }
                 }
-                
+
                 this.grammar.ast    = grammarAst;
                 this.grammar.error  = synErr;
             }
@@ -679,6 +681,22 @@ var App = React.createClass
                     for (iRule = 0; iRule < nRules; iRule++)
                     {
                         rule    = this.grammar.ast.rules [iRule];
+                        if (kDbgDoPrintTree)
+                        {
+                            console.log 
+                            (
+                                JSON.stringify 
+                                (
+                                    {
+                                        type:           rule.type,
+                                        name:           rule.name,
+                                        expression:     rule.expression
+                                    },
+                                    null, 
+                                    4
+                                )
+                            );                        
+                        }
                         refs    = [];
                         usedBys = [];
                         svg     = diagram (rule);

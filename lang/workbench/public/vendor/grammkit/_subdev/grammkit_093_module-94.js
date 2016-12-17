@@ -1,10 +1,12 @@
 /* module id:  94 */
 function (module,exports,__webpack_require__){eval(`
-var React           = __webpack_require__(104);
-var cx              = __webpack_require__(90);
-var parse           = __webpack_require__(103).parse;
-var diagram         = __webpack_require__(96);
-var getReferences   = __webpack_require__(98);
+var React               = __webpack_require__(104);
+var cx                  = __webpack_require__(90);
+var parse               = __webpack_require__(103).parse;
+var diagram             = __webpack_require__(96);
+var getReferences       = __webpack_require__(98);
+
+var kDbgDoPrintTree    = false;
 
 var App = React.createClass
 (
@@ -498,7 +500,7 @@ var App = React.createClass
                         synErr.eType        = "syn";
                     }
                 }
-                
+
                 this.grammar.ast    = grammarAst;
                 this.grammar.error  = synErr;
             }
@@ -533,6 +535,22 @@ var App = React.createClass
                     for (iRule = 0; iRule < nRules; iRule++)
                     {
                         rule    = this.grammar.ast.rules [iRule];
+                        if (kDbgDoPrintTree)
+                        {
+                            console.log 
+                            (
+                                JSON.stringify 
+                                (
+                                    {
+                                        type:           rule.type,
+                                        name:           rule.name,
+                                        expression:     rule.expression
+                                    },
+                                    null, 
+                                    4
+                                )
+                            );                        
+                        }
                         refs    = [];
                         usedBys = [];
                         svg     = diagram (rule);

@@ -1,7 +1,5 @@
 function main ()
 {
-  window.gParser = null;
-  
   var KB      = 1024;
   var MS_IN_S = 1000;
 
@@ -57,12 +55,14 @@ function main ()
 
     try {
       var timeBefore = (new Date).getTime();
-      var parserSource = PEG.buildParser(getGrammar(), {
+      var grammar = getGrammar ();
+      var opts = {
         cache:    $("#option-cache").is(":checked"),
         optimize: $("#option-optimize").val(),
         output:   "source",
         trace:    $("#option-trace").is(":checked")
-      });
+      }
+      var parserSource = PEG.buildParser(grammar, opts);
       var timeAfter = (new Date).getTime();
       
       localStorage.setItem ("mal.parserSource", parserSource);
@@ -135,7 +135,8 @@ function main ()
   function scheduleBuildAndParse() 
   {
     var currentGrammar = getGrammar ();
-    var nothingChanged = (currentGrammar === oldGrammar)
+    var nothingChanged = 
+          (currentGrammar === oldGrammar)
       && $("#parser-var").val() === oldParserVar
       && $("#option-cache").is(":checked") === oldOptionCache
       && $("#option-optimize").val() === oldOptionOptimize;
@@ -159,18 +160,25 @@ function main ()
   }
 
   function scheduleParse() {
-    var nothingChanged = 
-         $("#input").val() === oldInput;
-    if (nothingChanged) { return; }
+    var nothingChanged = $("#input").val() === oldInput;
+    if (nothingChanged) 
+    {
+        return; 
+    }
     
-    if (buildAndParseTimer !== null) { return; }
+    if (buildAndParseTimer !== null) 
+    {
+        return;
+    }
 
-    if (parseTimer !== null) {
+    if (parseTimer !== null) 
+    {
       clearTimeout(parseTimer);
       parseTimer = null;
     }
 
-    parseTimer = setTimeout(function() {
+    parseTimer = setTimeout(function() 
+    {
       parse();
       parseTimer = null;
     }, 500);
@@ -192,7 +200,8 @@ function main ()
     $("#input").height(($("#input").parent().parent().innerHeight() - 14) + "px");
   }
 
-  function getGrammar() {
+  function getGrammar() 
+  {
     return editor.getValue();
   }
 
@@ -247,7 +256,10 @@ function main ()
   editor.focus();
 }
 
-$(document).ready(function() 
-{
-    main ();
-});
+$(document).ready
+(
+    function() 
+    {
+        main ();
+    }
+);
